@@ -1,0 +1,8 @@
+{
+  "name": "tdt4140_11",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://gitlab.stud.idi.ntnu.no/tdt4140-2023/landsby-1/gruppe-11/tdt4140_11.git",
+  "author": "plebbimon <sebastiansmaland@gmail.com>",
+  "license": "MIT"
+}
