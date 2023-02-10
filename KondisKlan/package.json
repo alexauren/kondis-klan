@@ -9,6 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@mantine/core": "^5.10.3",
+    "@mantine/form": "^5.10.3",
+    "@mantine/hooks": "^5.10.3",
     "@tanstack/react-query": "^4.24.4",
     "firebase": "^9.17.1",
     "firebase-tools": "^11.22.0",

@@ -25,7 +25,7 @@ export function LandingPage() {
 
   return (
     <div className="landing-page">
-      <h1>My App</h1>
+      <h1>KondisKlan</h1>
       <p>My App is a React app that uses React and Firebase.</p>
       <button onClick={() => setWorkouts(data)}>click me</button>
         <div>{workouts.map((workout) => (
