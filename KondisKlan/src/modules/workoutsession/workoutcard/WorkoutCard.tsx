@@ -1,14 +1,4 @@
-import { createStyles, Card, Image, Text, Group, RingProgress } from '@mantine/core';
-// CSS
-const useStyles = createStyles((theme) => ({
-  footer: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: `${theme.spacing.sm}px ${theme.spacing.lg}px`,
-    borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
-      }`,
-  },
-}));
+import { createStyles, Card, Image, Text } from '@mantine/core';
 
 //interface
 interface WorkoutCard {
@@ -52,6 +42,17 @@ export function WorkoutCard({ image, title, description, stats }: WorkoutCard) {
     </Card>
   )
 }
+
+// CSS
+const useStyles = createStyles((theme) => ({
+  footer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: `${theme.spacing.sm}px ${theme.spacing.lg}px`,
+    borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
+      }`,
+  },
+}));
 
 // Example
 //import { WorkoutCard } from './modules/workoutsession/workoutcard/WorkoutCard'
