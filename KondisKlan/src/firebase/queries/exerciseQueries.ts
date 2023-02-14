@@ -19,3 +19,4 @@ function useExerciseDocument(collectionRef: string) {
         collection(db, collectionRef));
     return { data, loading, error };
 }
+
