@@ -28,7 +28,7 @@ export function useWorkoutSessionCollection() {
 export function useWorkoutSessionDocument(workoutSessionId: string) {
   //use useDocumentData to get the data from the document
   const [data, loading, error] = useDocumentData<DocumentData>(
-    doc(db, workoutSessionId)
+    doc(db, `workoutsessions/${workoutSessionId}`)
   );
   return { data, loading, error };
 }
