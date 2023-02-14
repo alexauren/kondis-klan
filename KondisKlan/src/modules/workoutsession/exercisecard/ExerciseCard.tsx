@@ -1,4 +1,4 @@
-import { createStyles, Card, Image, Text } from '@mantine/core';
+import {Card, Image, Text, Group } from '@mantine/core';
 
 //interface
 interface ExerciseCard {
@@ -13,7 +13,6 @@ interface ExerciseCard {
 
 //component
 export function ExerciseCard({ image, title, description, stats }: ExerciseCard) {
-  const { classes } = useStyles();
   const items = stats.map((stat) => (
     <div key={stat.title}>
       <Text>
@@ -38,32 +37,24 @@ export function ExerciseCard({ image, title, description, stats }: ExerciseCard)
       <Text mt="sm" mb="md" size="xs">
         {description}
       </Text>
-      <Card.Section className={classes.footer}>{items}</Card.Section>
+      <Card.Section>
+        <Group position="center" >
+          {items}
+        </Group>
+      </Card.Section>
     </Card>
   )
 }
 
-// CSS
-const useStyles = createStyles((theme) => ({
-  footer: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: `${theme.spacing.sm}px ${theme.spacing.lg}px`,
-    borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2]
-      }`,
-  },
-}));
-
 // Example
-//import { ExerciseCard } from './modules/workoutsession/ExerciseCard/ExerciseCard'
-{/* <ExerciseCard
-image={"https://www.gymgrossisten.no/on/demandware.static/-/Sites-Gymgrossisten-Library/default/dwfe1a19d3/page_designer_articles/slik-blir-du-bedre-i-benkpress2.jpg"}
-title="Benkpress"
-description="Benkpress er en øvelse som trener bryst, skuldre og triceps."
-stats={[
-  { title: 'Sets', value: '3' },
-  { title: 'Reps', value: '5' },
-  { title: 'Vekt', value: '100kg' },
-]}
-/>
-<ExerciseCard */}
+
+//import { ExerciseCard } from './modules/workoutsession/exercisecard/ExerciseCard'
+// <ExerciseCard
+//         image={reactLogo}
+//         title="React"
+//         description="A JavaScript library for building user interfaces"
+//         stats={[
+//           { title: 'Stars', value: '56k' },
+//           { title: 'Forks', value: '6.9k' },
+//           { title: 'Issues', value: '3' },
+//         ]}/>
