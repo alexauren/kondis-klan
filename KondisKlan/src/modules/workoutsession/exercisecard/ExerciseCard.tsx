@@ -1,7 +1,7 @@
 import { createStyles, Card, Image, Text } from '@mantine/core';
 
 //interface
-interface WorkoutCard {
+interface ExerciseCard {
   image: string;
   title: string;
   description: string;
@@ -12,7 +12,7 @@ interface WorkoutCard {
 }
 
 //component
-export function WorkoutCard({ image, title, description, stats }: WorkoutCard) {
+export function ExerciseCard({ image, title, description, stats }: ExerciseCard) {
   const { classes } = useStyles();
   const items = stats.map((stat) => (
     <div key={stat.title}>
@@ -55,8 +55,8 @@ const useStyles = createStyles((theme) => ({
 }));
 
 // Example
-//import { WorkoutCard } from './modules/workoutsession/workoutcard/WorkoutCard'
-{/* <WorkoutCard
+//import { ExerciseCard } from './modules/workoutsession/ExerciseCard/ExerciseCard'
+{/* <ExerciseCard
 image={"https://www.gymgrossisten.no/on/demandware.static/-/Sites-Gymgrossisten-Library/default/dwfe1a19d3/page_designer_articles/slik-blir-du-bedre-i-benkpress2.jpg"}
 title="Benkpress"
 description="Benkpress er en øvelse som trener bryst, skuldre og triceps."
@@ -66,4 +66,4 @@ stats={[
   { title: 'Vekt', value: '100kg' },
 ]}
 />
-<WorkoutCard */}
+<ExerciseCard */}
