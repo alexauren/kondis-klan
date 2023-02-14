@@ -3,3 +3,7 @@ export type WorkoutSession = {
     createdAt: string
     createdBy: string
 }
+
+export type WorkoutSessionDocument = WorkoutSession & {
+    id: string
+}
