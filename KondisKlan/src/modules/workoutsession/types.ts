@@ -3,3 +3,9 @@ export type WorkoutSession = {
     createdAt: string
     createdBy: string
 }
+
+export type Exercise = {
+    exerciseTitle: string
+    reps: string
+    sets: string
+}
