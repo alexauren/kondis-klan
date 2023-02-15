@@ -13,15 +13,18 @@
     "@emotion/react": "^11.10.5",
     "@emotion/serialize": "^1.1.1",
     "@emotion/utils": "^1.2.0",
-    "@mantine/core": "5.10.3",
     "@mantine/ds": "5.10.3",
     "@mantine/hooks": "5.10.3",
     "@mantine/prism": "^5.10.3",
     "@tabler/icons-react": "^2.4.0",
+    "@mantine/core": "^5.10.3",
+    "@mantine/form": "^5.10.3",
+    "@tanstack/react-query": "^4.24.4",
     "firebase": "^9.17.1",
     "firebase-tools": "^11.22.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-firebase-hooks": "^5.1.1"
   },
   "devDependencies": {
     "@types/react": "^18.0.27",
