@@ -57,7 +57,7 @@ export default function NavbarMinimal() {
   ));
 
   return (
-    <Navbar height={750} width={{ base: 80 }} p="md">
+    <Navbar style={{position: "fixed"}} height={750} width={{ base: 80 }} p="md">
       <Center>{/* <[Logo her] type="mark" size={30} /> */}</Center>
       <Navbar.Section grow mt={50}>
         <Stack justify="center" spacing={0}>
@@ -77,7 +77,6 @@ const useStyles = createStyles((theme) => ({
   link: {
     width: 50,
     height: 50,
-
     borderRadius: theme.radius.md,
     display: "flex",
     alignItems: "center",
