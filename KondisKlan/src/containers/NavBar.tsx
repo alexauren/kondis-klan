@@ -16,7 +16,7 @@ import {
   IconLogout,
   IconPlus,
 } from "@tabler/icons-react";
-import Logo from "../../../assets/logo.png";
+import Logo from "../assets/logo.png";
 
 interface NavbarLinkProps {
   icon: Icon;

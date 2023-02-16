@@ -4,7 +4,7 @@ import { exampleDocRef } from "../../firebase/queries/exampleQuery";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { collection, DocumentData } from "firebase/firestore";
 import { db } from "../../App";
-import Navbar from "./navbar/NavBar";
+import Navbar from "../../containers/NavBar";
 
 export function LandingPage() {
   const [workouts, setWorkouts] = useState<DocumentData[]>([]);
