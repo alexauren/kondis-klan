@@ -6,6 +6,7 @@ import {
   UnstyledButton,
   createStyles,
   Stack,
+  Image,
 } from "@mantine/core";
 import {
   Icon,
@@ -13,8 +14,9 @@ import {
   IconUser,
   IconSettings,
   IconLogout,
-  IconPlus
+  IconPlus,
 } from "@tabler/icons-react";
+import Logo from "../../../assets/logo.png";
 
 interface NavbarLinkProps {
   icon: Icon;
@@ -39,7 +41,7 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
 
 const mockdata = [
   { icon: IconHome2, label: "Home" },
-  { icon: IconPlus, label: "New program"},
+  { icon: IconPlus, label: "New program" },
   { icon: IconUser, label: "Account" },
   { icon: IconSettings, label: "Settings" },
 ];
@@ -57,10 +59,17 @@ export default function NavbarMinimal() {
   ));
 
   return (
-    <Navbar style={{position: "fixed"}} height={750} width={{ base: 80 }} p="md">
-      <Center>{/* <[Logo her] type="mark" size={30} /> */}</Center>
+    <Navbar
+      style={{ position: "fixed" }}
+      height={750}
+      width={{ base: 80 }}
+      p="md"
+    >
+      <Center>
+        <Image src={Logo} style={{paddingTop:50}} />
+      </Center>
       <Navbar.Section grow mt={50}>
-        <Stack justify="center" spacing={0}>
+        <Stack justify="center" spacing={10}>
           {links}
         </Stack>
       </Navbar.Section>
