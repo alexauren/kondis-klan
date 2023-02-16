@@ -4,8 +4,6 @@ export type WorkoutSession = {
     createdBy: string
 }
 
-export type Exercise = {
-    exerciseTitle: string
-    reps: string
-    sets: string
+export type WorkoutSessionDocument = WorkoutSession & {
+    id: string
 }
