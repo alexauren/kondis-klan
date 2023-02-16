@@ -12,7 +12,7 @@ const session: WorkoutSession = {
     { name: "Bench Press", reps: 10, sets: 3, weight: 135 },
     { name: "Pull-Ups", reps: 8, sets: 3 },
     { name: "Shoulder Press", reps: 12, sets: 3, weight: 50 },
-    { name: "Bicep Curls", reps: 15, sets: 3, weight: 25 },
+    { name: "Planke", sets: 3, duration: 25 },
   ],
 };
 

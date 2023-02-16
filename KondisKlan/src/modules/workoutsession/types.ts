@@ -6,3 +6,7 @@ export type WorkoutSession = {
     createdBy: string
     exercises?: Exercise[]
 }
+
+export type WorkoutSessionDocument = WorkoutSession & {
+    id: string
+}
