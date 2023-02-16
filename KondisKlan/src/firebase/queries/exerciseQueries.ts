@@ -6,9 +6,11 @@ import { db } from '../../App'
 import { Exercise } from '../../modules/exercise/types';    
 
 export function useExerciseCollection(documentRef: string) {
+    console.log("HELLO")
     //use useCollectionData to get the data from the collection
     const [data, loading, error] = useCollectionData(
         collection(db, `workoutsessions/${documentRef}/exercises`));
+
     return { data, loading, error };
 }
 

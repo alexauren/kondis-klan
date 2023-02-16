@@ -5,6 +5,7 @@ import { useCollectionData } from "react-firebase-hooks/firestore";
 import { collection, DocumentData } from "firebase/firestore";
 import { db } from "../../App";
 import Navbar from "./navbar/NavBar";
+import { Workouts } from "./Workouts";
 
 export function LandingPage() {
   const [workouts, setWorkouts] = useState<DocumentData[]>([]);
@@ -24,17 +25,13 @@ export function LandingPage() {
     return <div>Not found</div>;
   }
 
+  console.log(data);
   return (
     <div className="landing-page">
       <Navbar />
       <h1>KondisKlan</h1>
-      <p>My App is a React app that uses React and Firebase.</p>
-      <button onClick={() => setWorkouts(data)}>click me</button>
-      <div>
-        {workouts.map((workout) => (
-          <span>{workout.title}</span>
-        ))}
-      </div>
+
+      <Workouts />
     </div>
   );
 }

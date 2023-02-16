@@ -1,6 +1,10 @@
-
+import { Title, Text, Stack } from "@mantine/core";
+import { useWorkoutSessionCollection } from "../../firebase/queries/workoutSessionQueries";
 import { Exercise } from "../exercise/types";
-import { WorkoutSession } from "../workoutsession/types";
+import {
+  WorkoutSession,
+  WorkoutSessionDocument,
+} from "../workoutsession/types";
 import { WorkoutCard } from "../workoutsession/workoutcard/WorkoutCard";
 
 // Define a WorkoutSession object
@@ -21,9 +25,26 @@ const exercises: Exercise[] = session.exercises || [];
 
 // Render the WorkoutCard component with the session and exercises props
 export function Workouts() {
+  const { data, error, loading } = useWorkoutSessionCollection();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error || !data) {
+    return <span>Error</span>;
+  }
+
+  const workouts = data as WorkoutSessionDocument[];
   return (
-    <div>
-      <WorkoutCard workoutsession={session} exercises={exercises} />
-    </div>
+    <Stack>
+      {workouts.map((workout) => (
+        <WorkoutCard
+          key={workout.id}
+          workoutsession={workout}
+          exercises={workout.exercises || []}
+        />
+      ))}
+    </Stack>
   );
 }
