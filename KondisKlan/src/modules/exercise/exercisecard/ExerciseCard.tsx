@@ -11,7 +11,7 @@ export function ExerciseCard({ exercise }: ExerciseCard) {
   const { name, ...attributes } = exercise;
 
   const items = Object.entries(attributes).map((attribute) => (
-    <Stack>
+    <Stack key={attribute[0]}>
       <Text>{attribute[0]}</Text>
       <Text weight={500} size="sm">
         {attribute[1]}

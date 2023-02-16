@@ -4,6 +4,8 @@ import { exampleDocRef} from "../../firebase/queries/exampleQuery";
 import { useCollectionData } from "react-firebase-hooks/firestore";
 import { collection, DocumentData } from "firebase/firestore";
 import { db } from "../../App";
+import { Container } from '@mantine/core';
+
 
 export function LandingPage() {
     const [workouts, setWorkouts] = useState<DocumentData[]>([]);
@@ -23,14 +25,26 @@ export function LandingPage() {
         return <div>Not found</div>;
     }
 
+    
+  console.log(data);
   return (
+
     <div className="landing-page">
-      <h1>KondisKlan</h1>
-      <p>My App is a React app that uses React and Firebase.</p>
-      <button onClick={() => setWorkouts(data)}>click me</button>
-        <div>{workouts.map((workout) => (
+      <h1>Din feed</h1>
+    {/* <div id="container">
+      <>
+        <Container>
+          <div>{data.map((workout) => (
             <span>{workout.title}</span>
         ))}</div>
+        </Container>
+      </>
+    </div> */}
     </div>
+    
+   
   );
+
+
+
 }

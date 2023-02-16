@@ -36,22 +36,22 @@ export function ExampleForm() {
     // Alt wrappes i en stack for å få litt spacing mellom elementene
     // Hvis du åpner opp konsollen kan du se at å trykke på knappen console.logger verdier fra formet
 
-  return (
-    <form onSubmit={form.onSubmit((values) => console.log(values))}>
-        <Stack>
-      <TextInput placeholder="tittel" {...form.getInputProps("title")} />
-      <TextInput
-        placeholder="dato laget"
-        {...form.getInputProps("createdAt")}
-      />
-      <TextInput placeholder="laget av" {...form.getInputProps("createdBy")} />
+  // return (
+  //   <form onSubmit={form.onSubmit((values) => console.log(values))}>
+  //       <Stack>
+  //     <TextInput placeholder="tittel" {...form.getInputProps("title")} />
+  //     <TextInput
+  //       placeholder="dato laget"
+  //       {...form.getInputProps("createdAt")}
+  //     />
+  //     <TextInput placeholder="laget av" {...form.getInputProps("createdBy")} />
       
-      <Group position="right">
-        <Button type="submit" variant="outline"  color="red">
-          Submit
-        </Button>
-      </Group>
-      </Stack>
-    </form>
-  );
+  //     <Group position="right">
+  //       <Button type="submit" variant="outline"  color="red">
+  //         Submit
+  //       </Button>
+  //     </Group>
+  //     </Stack>
+  //   </form>
+  // );
 }
