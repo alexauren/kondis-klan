@@ -18,7 +18,7 @@ function App() {
       <ExampleForm/>
       <Workouts />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
