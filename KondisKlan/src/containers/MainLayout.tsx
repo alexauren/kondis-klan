@@ -13,7 +13,7 @@ import {
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Logo from "assets/logo.png";
-import NavBar from "modules/landing/navbar/NavBar";
+import NavBar from "containers/NavBar";
 import { useMobile } from "util/hooks";
 
 interface MainLayoutProps {
