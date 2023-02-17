@@ -3,10 +3,12 @@ import {
   Navbar,
   Center,
   Tooltip,
+  Text,
   UnstyledButton,
   createStyles,
   Stack,
   Image,
+  Group,
 } from "@mantine/core";
 import {
   Icon,
@@ -17,6 +19,7 @@ import {
   IconPlus,
 } from "@tabler/icons-react";
 import Logo from "assets/logo.png";
+import { useMobile } from "util/hooks";
 
 interface NavbarLinkProps {
   icon: Icon;
@@ -27,13 +30,17 @@ interface NavbarLinkProps {
 
 function NavbarLink({ icon: Icon, label, active, onClick}: NavbarLinkProps) {
   const { classes, cx } = useStyles();
+  const isMobile = useMobile();
   return (
-    <Tooltip label={label} position="right" transitionDuration={0}>
+    <Tooltip label={label} withinPortal position="right" transitionDuration={0}>
       <UnstyledButton
         onClick={onClick}
         className={cx(classes.link, { [classes.active]: active })}
       >
-        <Icon stroke={1.5} />
+        <Group>
+        {isMobile && <Text>{label}</Text>}
+        <Icon stroke={1.5}/>
+        </Group>
       </UnstyledButton>
     </Tooltip>
   );
@@ -67,7 +74,7 @@ export default function NavbarMinimal({isHidden}: NavbarMinimalProps) {
       hidden={isHidden}
       p="md"
       hiddenBreakpoint="xs"
-      width={{lg: 80, sm: 80, xs: 80}}
+      width={{lg: 80, sm: 200, xs: 200}}
       style={{
         backgroundColor: 'white',
         overflowY: 'auto',
@@ -91,7 +98,6 @@ export default function NavbarMinimal({isHidden}: NavbarMinimalProps) {
 
 const useStyles = createStyles((theme) => ({
   link: {
-    width: 50,
     height: 50,
     borderRadius: theme.radius.md,
     display: "flex",

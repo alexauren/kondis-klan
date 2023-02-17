@@ -23,6 +23,7 @@ function Root() {
       kondisGreenLight: ["#e5f7e5"],
     },
     primaryShade: 6,
+    primaryColor: "teal",
   };
 
   return (
