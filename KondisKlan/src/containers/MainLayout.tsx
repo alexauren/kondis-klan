@@ -55,10 +55,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                     <Text component={Link} to="/" weight={300} size="lg">
                       KondisKlan
                     </Text>
-                  <a
-                    target="_blank"
-                    href="https://github.com/KSG-IT/ksg-nett-frontend/blob/develop/CHANGELOG.md"
-                  ></a>
                 </Group>
             </Group>
           </div>
