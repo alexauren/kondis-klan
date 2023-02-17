@@ -25,7 +25,7 @@ interface NavbarLinkProps {
   onClick?(): void;
 }
 
-function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
+function NavbarLink({ icon: Icon, label, active, onClick}: NavbarLinkProps) {
   const { classes, cx } = useStyles();
   return (
     <Tooltip label={label} position="right" transitionDuration={0}>
@@ -46,7 +46,11 @@ const mockdata = [
   { icon: IconSettings, label: "Settings" },
 ];
 
-export default function NavbarMinimal() {
+interface NavbarMinimalProps {
+  isHidden: boolean;
+}
+
+export default function NavbarMinimal({isHidden}: NavbarMinimalProps) {
   const [active, setActive] = useState(0);
 
   const links = mockdata.map((link, index) => (
@@ -60,14 +64,17 @@ export default function NavbarMinimal() {
 
   return (
     <Navbar
-      style={{ position: "fixed" }}
-      height={750}
-      width={{ base: 80 }}
+      hidden={isHidden}
       p="md"
+      hiddenBreakpoint="xs"
+      width={{lg: 80, sm: 80, xs: 80}}
+      style={{
+        backgroundColor: 'white',
+        overflowY: 'auto',
+        overscrollBehavior: 'contain',
+        fontSize: '12px',
+      }}
     >
-      <Center>
-        <Image src={Logo} style={{paddingTop:50}} />
-      </Center>
       <Navbar.Section grow mt={50}>
         <Stack justify="center" spacing={10}>
           {links}
