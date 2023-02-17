@@ -2,8 +2,8 @@
 
 import { addDoc, collection, deleteDoc, doc, getDocs, setDoc } from 'firebase/firestore';
 import { useCollectionData, useDocumentData } from 'react-firebase-hooks/firestore';
-import { db } from '../../App'
-import { Exercise } from '../../modules/exercise/types';    
+import { db } from 'containers/Root'
+import { Exercise } from 'modules/exercise/types';    
 
 export function useExerciseCollection(documentRef: string) {
     console.log("HELLO")
