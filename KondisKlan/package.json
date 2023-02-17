@@ -42,7 +42,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "cd KondisKlan && pretty-quick --staged"
+      "pre-commit": "cd KondisKlan && yarn pretty-quick --staged"
     }
   },
   "lint-staged": {
