@@ -1,16 +1,15 @@
-import { createStyles, Avatar, Text, Group } from '@mantine/core';
-import { IconUser, IconAt } from '@tabler/icons-react';
+import { createStyles, Avatar, Text, Group } from "@mantine/core";
+import { IconUser, IconAt } from "@tabler/icons-react";
 
-
-interface UserInfoIconsProps {
-  avatar: string;
-  name: string;
-  username: string;
-  email: string;
-}
-
-export default function UserInfoIcons({ avatar, name, username, email }: UserInfoIconsProps) {
+export default function UserInfo() {
   const { classes } = useStyles();
+  
+  //Sett inn logikk for å hente ut brukerinfo fra databasen her.
+  var avatar = "";
+  var name = "";
+  var email = "";
+  var username = "";
+
   return (
     <div>
       <Group noWrap>
@@ -40,11 +39,14 @@ export default function UserInfoIcons({ avatar, name, username, email }: UserInf
 }
 
 const useStyles = createStyles((theme) => ({
-    icon: {
-      color: theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[5],
-    },
-  
-    name: {
-      fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-    },
-  }));
+  icon: {
+    color:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[3]
+        : theme.colors.gray[5],
+  },
+
+  name: {
+    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+  },
+}));

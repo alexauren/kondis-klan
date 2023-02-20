@@ -17,12 +17,14 @@ import {
   IconPlus,
 } from "@tabler/icons-react";
 import Logo from "../assets/logo.png";
+import { useNavigate } from "react-router-dom";
 
 interface NavbarLinkProps {
   icon: Icon;
   label: string;
   active?: boolean;
   onClick?(): void;
+  to: string;
 }
 
 function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
@@ -40,21 +42,30 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
 }
 
 const mockdata = [
-  { icon: IconHome2, label: "Home" },
-  { icon: IconPlus, label: "New program" },
-  { icon: IconUser, label: "Account" },
-  { icon: IconSettings, label: "Settings" },
+  { icon: IconHome2, label: "Home", link: "/" },
+  { icon: IconPlus, label: "New program", link: "/newprogram" },
+  { icon: IconUser, label: "Profile", link: "/profile" },
+  { icon: IconSettings, label: "Settings", link: "/settings" },
+  { icon: IconLogout, label: "Logout", link: "/login" },
 ];
 
 export default function NavbarMinimal() {
   const [active, setActive] = useState(0);
+
+  let navigate = useNavigate();
+
+  function click(link: string, index: number) {
+    navigate(link);
+    return setActive(index);
+  }  
 
   const links = mockdata.map((link, index) => (
     <NavbarLink
       {...link}
       key={link.label}
       active={index === active}
-      onClick={() => setActive(index)}
+      onClick={() => click(link.link, index)}
+      to={link.link}
     />
   ));
 
@@ -66,7 +77,7 @@ export default function NavbarMinimal() {
       p="md"
     >
       <Center>
-        <Image src={Logo} style={{paddingTop:50}} />
+        <Image src={Logo} style={{ paddingTop: 50 }} />
       </Center>
       <Navbar.Section grow mt={50}>
         <Stack justify="center" spacing={10}>
@@ -75,7 +86,7 @@ export default function NavbarMinimal() {
       </Navbar.Section>
       <Navbar.Section>
         <Stack justify="center" spacing={0}>
-          <NavbarLink icon={IconLogout} label="Logout" />
+          <NavbarLink icon={IconLogout} label="Logout" to="/login" />
         </Stack>
       </Navbar.Section>
     </Navbar>
