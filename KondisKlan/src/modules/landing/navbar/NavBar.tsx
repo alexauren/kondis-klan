@@ -17,6 +17,7 @@ import {
   IconPlus,
 } from "@tabler/icons-react";
 import Logo from "../../../assets/logo.png";
+import { Link } from "react-router-dom";
 
 interface NavbarLinkProps {
   icon: Icon;
@@ -30,6 +31,8 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
   return (
     <Tooltip label={label} position="right" transitionDuration={0}>
       <UnstyledButton
+        component={Link}
+        to={`/${label}`}	
         onClick={onClick}
         className={cx(classes.link, { [classes.active]: active })}
       >
@@ -41,7 +44,7 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
 
 const mockdata = [
   { icon: IconHome2, label: "Home" },
-  { icon: IconPlus, label: "New program" },
+  { icon: IconPlus, label: "newprogram" },
   { icon: IconUser, label: "Account" },
   { icon: IconSettings, label: "Settings" },
 ];
