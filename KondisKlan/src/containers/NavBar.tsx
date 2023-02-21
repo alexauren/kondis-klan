@@ -27,15 +27,8 @@ interface NavbarLinkProps {
   label: string
   active?: boolean
   onClick?(): void
-  icon: Icon
-  label: string
-  active?: boolean
-  onClick?(): void
 }
 
-function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
-  const { classes, cx } = useStyles()
-  const isMobile = useMobile()
 function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
   const { classes, cx } = useStyles()
   const isMobile = useMobile()
@@ -48,12 +41,9 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
         <Group>
           {isMobile && <Text>{label}</Text>}
           <Icon stroke={1.5} />
-          {isMobile && <Text>{label}</Text>}
-          <Icon stroke={1.5} />
         </Group>
       </UnstyledButton>
     </Tooltip>
-  )
   )
 }
 
@@ -63,14 +53,8 @@ const mockdata = [
   { icon: IconUser, label: 'Account' },
   { icon: IconSettings, label: 'Settings' },
 ]
-  { icon: IconHome2, label: 'Home' },
-  { icon: IconPlus, label: 'New program' },
-  { icon: IconUser, label: 'Account' },
-  { icon: IconSettings, label: 'Settings' },
-]
 
 interface NavbarMinimalProps {
-  isHidden: boolean
   isHidden: boolean
 }
 
@@ -86,14 +70,12 @@ export default function NavbarMinimal({ isHidden }: NavbarMinimalProps) {
       onClick={() => setActive(index)}
     />
   ))
-  ))
 
   return (
     <Navbar
       hidden={isHidden}
       p="md"
       hiddenBreakpoint="xs"
-      width={{ lg: 80, sm: 200, xs: 200 }}
       width={{ lg: 80, sm: 200, xs: 200 }}
       style={{
         backgroundColor: 'white',
@@ -117,7 +99,6 @@ export default function NavbarMinimal({ isHidden }: NavbarMinimalProps) {
         </Stack>
       </Navbar.Section>
     </Navbar>
-  )
   )
 }
 
