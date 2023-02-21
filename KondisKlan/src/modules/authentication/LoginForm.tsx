@@ -1,5 +1,8 @@
 import { TextInput, PasswordInput, Group, Button } from '@mantine/core'
 import { useForm } from '@mantine/form'
+import { FullContentLoader } from 'components/FullContentLoader'
+import FullPageError from 'components/FullPageError'
+import FullPageLoader from 'components/FullPageLoader'
 import { getAuth } from 'firebase/auth'
 import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth'
 import { useNavigate } from 'react-router-dom'
@@ -35,7 +38,7 @@ export function LoginForm({
 
   if (loading) {
     setIsLoadingCallback(true)
-    return <div>Loading...</div>
+    return <FullContentLoader />
   }
 
   if (user) {
