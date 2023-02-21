@@ -1,14 +1,8 @@
 import { Text, Container, Title, SimpleGrid, Card } from "@mantine/core";
-import { Exercise } from "../../exercise/types";
-import { ExerciseCard } from "../../exercise/exercisecard/ExerciseCard";
-import { WorkoutSession, WorkoutSessionDocument } from "../types";
-
-import { useState } from "react";
-
-import { useCollectionData } from "react-firebase-hooks/firestore";
-import { collection, DocumentData } from "firebase/firestore";
-import { db } from "../../../App";
-import { useExerciseCollection } from "../../../firebase/queries/exerciseQueries";
+import { Exercise } from "modules/exercise/types";
+import { ExerciseCard } from "modules/exercise/components/ExerciseCard";
+import { WorkoutSession, WorkoutSessionDocument } from "modules/workoutsession/types";
+import { useExerciseCollection } from "firebase/queries/exerciseQueries";
 
 //interface
 interface WorkoutCard {
