@@ -11,16 +11,17 @@ import {
   useCollectionData,
   useDocumentData,
 } from "react-firebase-hooks/firestore";
-import { db } from "../../App";
+import { db } from "containers/Root";
 import {
   WorkoutSession,
+  workoutSessionConverter,
   WorkoutSessionDocument,
-} from "../../modules/workoutsession/types";
+} from "modules/workoutsession/types";
 
 export function useWorkoutSessionCollection() {
   //use useCollectionData to get the data from the collection
   const [data, loading, error] = useCollectionData<DocumentData>(
-    collection(db, "workoutsessions")
+    collection(db, "workoutsessions").withConverter(workoutSessionConverter)
   );
   return { data, loading, error };
 }

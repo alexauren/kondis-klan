@@ -1,36 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { exampleDocRef} from "../../firebase/queries/exampleQuery";
-import { useCollectionData } from "react-firebase-hooks/firestore";
 import { collection, DocumentData } from "firebase/firestore";
-import { db } from "../../App";
+import { useState } from "react";
+import { useCollectionData } from "react-firebase-hooks/firestore";
+import { db } from "containers/Root";
+import { WorkoutSessionDetail } from "modules/workoutsession/views/WorkoutSessionDetail";
+import { useWorkoutSessionCollection } from "firebase/queries/workoutSessionQueries";
+import { Container } from "@mantine/core";
+import { useMobile } from "util/hooks";
 
 export function LandingPage() {
-    const [workouts, setWorkouts] = useState<DocumentData[]>([]);
-    //write a query using useDocumentData to get the workouts
-   const exampleDocRef =  collection(db, "workoutsessions");
-   const [data, loading, error] = useCollectionData(exampleDocRef);
-
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <span>Error</span>;
-    }
-
-    if (!data) {
-        return <div>Not found</div>;
-    }
-
+  const isMobile = useMobile();
   return (
-    <div className="landing-page">
-      <h1>KondisKlan</h1>
-      <p>My App is a React app that uses React and Firebase.</p>
-      <button onClick={() => setWorkouts(data)}>click me</button>
-        <div>{workouts.map((workout) => (
-            <span>{workout.title}</span>
-        ))}</div>
-    </div>
+    <Container p={isMobile ? 0 : "sm"} size={"sm"}>
+      <WorkoutSessionDetail />
+    </Container>
   );
 }
