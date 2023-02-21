@@ -1,37 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { exampleDocRef } from "../../firebase/queries/exampleQuery";
-import { useCollectionData } from "react-firebase-hooks/firestore";
 import { collection, DocumentData } from "firebase/firestore";
-import { db } from "../../App";
-import Navbar from "./navbar/NavBar";
+import { useState } from "react";
+import { useCollectionData } from "react-firebase-hooks/firestore";
+import { db } from "containers/Root";
 import { Workouts } from "./Workouts";
+import { useWorkoutSessionCollection } from "firebase/queries/workoutSessionQueries";
+import { Container } from "@mantine/core";
+import { useMobile } from "util/hooks";
 
 export function LandingPage() {
-  const [workouts, setWorkouts] = useState<DocumentData[]>([]);
-  //write a query using useDocumentData to get the workouts
-  const exampleDocRef = collection(db, "workoutsessions");
-  const [data, loading, error] = useCollectionData(exampleDocRef);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <span>Error</span>;
-  }
-
-  if (!data) {
-    return <div>Not found</div>;
-  }
-
-  console.log(data);
+  const isMobile = useMobile();
   return (
-    <div className="landing-page">
-      <Navbar />
-      <h1>KondisKlan</h1>
-
+    <Container p={isMobile ? 0 : "sm"} size={"sm"}>
       <Workouts />
-    </div>
+    </Container>
   );
 }
