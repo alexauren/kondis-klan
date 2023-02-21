@@ -1,18 +1,17 @@
-import { Route, Routes } from "react-router-dom"
-import MainLayout from "../containers/MainLayout"
-import { LandingPage } from "../modules/landing/LandingPage"
-import MainContent from "./MainContent"
+import LoginPage from 'modules/authentication/LoginPage'
+import SignupPage from 'modules/authentication/SignupPage'
+import { Route, Routes } from 'react-router-dom'
+import MainLayout from '../containers/MainLayout'
+import { LandingPage } from '../modules/landing/LandingPage'
+import MainContent from './MainContent'
 
 const PublicRoutes: React.FC = () => {
-    return (
-        <Routes>
-            <Route path="/" element={<MainContent />}>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="*" element={<h1>404</h1>} />
-            </Route>
-            {/* TODO: Insert routes to e.g. profile and other pages*/}
-        </Routes>
-    )
+  return (
+    <Routes>
+      <Route path="/" element={<LoginPage />} />
+      <Route path="/signup" element={<SignupPage />} />
+    </Routes>
+  )
 }
 
 export default PublicRoutes
