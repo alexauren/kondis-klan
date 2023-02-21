@@ -9,36 +9,40 @@ import {
   useMantineTheme,
   Text,
   Image,
-} from "@mantine/core";
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import Logo from "assets/logo.png";
-import NavBar from "containers/NavBar";
-import { useMobile } from "util/hooks";
-import { HeaderCustom } from "./Header";
+} from '@mantine/core'
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import Logo from 'assets/logo.png'
+import NavBar from 'containers/NavBar'
+import { useMobile } from 'util/hooks'
+import { HeaderCustom } from './Header'
 
 interface MainLayoutProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
-  const theme = useMantineTheme();
-  const [sidebarOpen, toggleSidebar] = useState(false);
-  const isMobile = useMobile();
+  const theme = useMantineTheme()
+  const [sidebarOpen, toggleSidebar] = useState(false)
+  const isMobile = useMobile()
   return (
     <AppShell
       styles={{
         main: {
-          background: theme.colors["kondisGreen"],
+          background: theme.colors['kondisGreen'],
         },
       }}
-      navbar={<NavBar isHidden={isMobile  ? sidebarOpen : false} />}
-      header={<HeaderCustom toggleSidebarCallBack={toggleSidebar} sidebarOpen={sidebarOpen}/>
+      navbar={<NavBar isHidden={isMobile ? sidebarOpen : false} />}
+      header={
+        <HeaderCustom
+          toggleSidebarCallBack={toggleSidebar}
+          sidebarOpen={sidebarOpen}
+        />
       }
     >
       {children}
     </AppShell>
-  );
-};
+  )
+}
 
-export default MainLayout;
+export default MainLayout
