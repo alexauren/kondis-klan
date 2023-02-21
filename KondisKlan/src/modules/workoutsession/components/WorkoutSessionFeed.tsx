@@ -1,31 +1,15 @@
 import { Stack } from '@mantine/core'
+import { FullContentLoader } from 'components/FullContentLoader'
 import { WorkoutCard } from 'modules/workoutsession/components/WorkoutCard'
 import { useWorkoutSessionCollection } from '../../../firebase/queries/workoutSessionQueries'
 import { Exercise } from '../../exercise/types'
 import { WorkoutSession, WorkoutSessionDocument } from '../types'
-
-// Define a WorkoutSession object
-const session: WorkoutSession = {
-  title: 'Upper Body Workout',
-  createdAt: '2023-02-14',
-  createdBy: 'John Doe',
-  exercises: [
-    { name: 'Bench Press', reps: 10, sets: 3, weight: 135 },
-    { name: 'Pull-Ups', reps: 8, sets: 3 },
-    { name: 'Shoulder Press', reps: 12, sets: 3, weight: 50 },
-    { name: 'Planke', sets: 3, duration: 25 },
-  ],
-}
-
-// Define an array of Exercise objects
-const exercises: Exercise[] = session.exercises || []
-
 // Render the WorkoutCard component with the session and exercises props
 export function WorkoutSessionFeed() {
   const { data, error, loading } = useWorkoutSessionCollection()
 
   if (loading) {
-    return <div>Loading...</div>
+    return <FullContentLoader />
   }
 
   if (error || !data) {
