@@ -26,6 +26,7 @@ import { useState } from 'react'
 
 export function SignUp() {
   const auth = getAuth()
+  const navigate = useNavigate()
   const form = useForm({
     initialValues: {
       email: '',
@@ -51,7 +52,9 @@ export function SignUp() {
   }
 
   if (user) {
-    createUserDoc(user.user, displayName)
+    createUserDoc(user.user, displayName).then(() => {
+      navigate('/')
+    })
   }
 
   function handleSubmit(values: {
