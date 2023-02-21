@@ -18,7 +18,7 @@ var choosenWorkout = ""
 
 //submitExercise er en funksjon som legger til en exercise i databasen. Den velger hvilken workout den skal legge til i basert på variabelen choosenWorkout
 export const submitExercise = async (values: Exercise) => {
-  const exercise = collection(db, "workouts/" + choosenWorkout + "/exercise")
+  const exercise = collection(db, "workoutsession/" + choosenWorkout + "/exercise")
   await addDoc(exercise, values)
 }
 
@@ -76,11 +76,6 @@ export function ExerciseForm() {
         </Button>
       </Group>
       </Stack>
-      <div>
-      <Button color="red" name="testButton" onClick={() => choosenWorkout = "testButtonText"}>
-      testButton
-    </Button>
-        </div>   
         </form>
 
     
