@@ -4,27 +4,18 @@ import { useForm } from '@mantine/form'
 import { db } from 'containers/Root'
 import { Exercise } from '../../exercise/types'
 
-//Async betyr at funksjonen venter på svar fra databasen før den fortsetter
-//db er firebase databasen
-//addDoc er en funksjon fra firebase som legger til en dokument i databasen
-//Values: du sir at typen av value MÅ være WorkoutSession
-// const submitWorkout = async (values: WorkoutSession) => {
-//   const workout = collection(db, 'workoutsessions')
-//   await addDoc(workout, values)
-// }
-//ChoosenWorkout skal bli endret basert på hvilken workout man har klikket inn på.
-var choosenWorkout = ''
-
-//submitExercise er en funksjon som legger til en exercise i databasen. Den velger hvilken workout den skal legge til i basert på variabelen choosenWorkout
-export const submitExercise = async (values: Exercise) => {
-  const exercise = collection(
-    db,
-    'workoutsession/' + choosenWorkout + '/exercise'
-  )
-  await addDoc(exercise, values)
+export function generateExercise(values: any) {
+  const exercise: Exercise = {
+    name: values.name,
+    reps: values.reps,
+    sets: values.sets,
+    weight: values.weight,
+    duration: values.duration,
+  }
+  return exercise
 }
 
-export function ExerciseForm() {
+export function ExerciseForm(props: any) {
   const form = useForm({
     initialValues: {
       name: '',
@@ -45,18 +36,22 @@ export function ExerciseForm() {
     },
   })
 
-  //Litt forklaring her:
-  // TextInput er en komponent fra Mantine som tar inn en placeholder og en onChange funksjon
-  // form.getInputProps er en funksjon som returnerer en onChange funksjon og en value
-  // ...form.getInputProps("exerciseTitle") er en spread operator som gjør at vi kan sende inn onChange og value som props til TextInput
-  // Når man klikker på button, så kjører onSubmit og sender inn verdier fra formet
-  // Alt wrappes i en stack for å få litt spacing mellom elementene
-  // Hvis du åpner opp konsollen kan du se at å trykke på knappen console.logger verdier fra formet
+  const exerciseList: Exercise[] = []
 
-  //Det nedenfor er det visuelle
+  const handleClick = () => {
+    props.setExerciseList(exerciseList)
+    props.setOpened(false)
+  }
 
   return (
-    <form onSubmit={form.onSubmit(values => submitExercise(values))}>
+    <form
+      onSubmit={form.onSubmit(values => {
+        const exercise = generateExercise(values)
+        exerciseList.push(exercise)
+        form.reset()
+        alert('Exercise has been added!')
+      })}
+    >
       <Stack>
         <TextInput placeholder="Name" {...form.getInputProps('name')} />
         <NumberInput placeholder="Reps" {...form.getInputProps('reps')} />
@@ -67,9 +62,10 @@ export function ExerciseForm() {
           {...form.getInputProps('Duration')}
         />
         <Group position="right">
-          <Button type="submit" variant="outline" color="red">
+          <Button type="submit" variant="outline">
             Add exercise
           </Button>
+          <Button onClick={handleClick}>Done</Button>
         </Group>
       </Stack>
     </form>
