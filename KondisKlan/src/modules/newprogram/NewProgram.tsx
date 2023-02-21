@@ -29,31 +29,30 @@ export function NewProgram() {
     setActive(current => (current > 0 ? current - 1 : current))
   const [opened, setOpened] = useState(false)
   const [isValid, setIsValid] = useState(false)
+  const [exerciseList, setExerciseList] = useState<Exercise[]>([])
 
-  const form = useForm({
-    //data for testing purposes
-    initialValues: { name: '', email: '', Date: new Date() },
+  const currentDate = new Date()
+    .toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
+    .replace(/\//g, '.')
+
+  const form = useForm<WorkoutSession>({
+    initialValues: { title: '', createdBy: '', createdAt: currentDate },
     validateInputOnBlur: true,
     validate: {
-      name: value =>
+      title: value =>
         value.length < 2 ? 'Name must have at least 2 letters' : null,
-      email: value => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+      createdBy: value => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
     },
   })
 
-  const session: WorkoutSession = {
-    title: 'Upper Body Workout',
-    createdAt: '2023-02-14',
-    createdBy: 'John Doe',
-    exercises: [
-      { name: 'Bench Press', reps: 10, sets: 3, weight: 135 },
-      { name: 'Pull-Ups', reps: 8, sets: 3 },
-      { name: 'Shoulder Press', reps: 12, sets: 3, weight: 50 },
-      { name: 'Planke', sets: 3, duration: 25 },
-    ],
+  function handleSubmit(values: WorkoutSession) {
+    values.exercises = exerciseList
+    submitWorkout(values)
   }
-
-  han
 
   useEffect(() => {
     setIsValid(Object.keys(form.errors).length === 0)
@@ -70,24 +69,25 @@ export function NewProgram() {
           mt="md"
         >
           <Stepper.Step label="First step" description="Create a new program">
-            <form>
+            <form onSubmit={form.onSubmit(values => handleSubmit(values))}>
               <TextInput
                 withAsterisk
                 label="Name of program"
                 placeholder="Push, Pull, Legs"
-                {...form.getInputProps('name')}
+                {...form.getInputProps('title')}
               />
               <TextInput
                 mt="sm"
                 label="Createdby (will be auto filled)"
                 placeholder="john@smith.com"
-                {...form.getInputProps('email')}
+                {...form.getInputProps('createdBy')}
               />
-              <DatePicker
+              {/* <DatePicker
                 label="Created date"
                 placeholder="Choose date"
-                {...form.getInputProps('Date')}
-              />
+                {...form.getInputProps('createdAt')}
+              /> */}
+              <Button type="submit">Submit</Button>
             </form>
           </Stepper.Step>
           <Stepper.Step label="Second step" description="Choose exercises">
@@ -95,8 +95,6 @@ export function NewProgram() {
               variant="outline"
               onClick={() => {
                 setOpened(true)
-                //more functions here
-                //submitWorkout(form.values)
               }}
             >
               Choose exercises
@@ -106,7 +104,7 @@ export function NewProgram() {
               opened={opened}
               onClose={() => setOpened(false)}
             >
-              <ExerciseForm />
+              <ExerciseForm exerciseList={exerciseList} setOpened={setOpened} />
             </Modal>
           </Stepper.Step>
           <Stepper.Completed>
@@ -119,14 +117,8 @@ export function NewProgram() {
             Back
           </Button>
           <Button
-            onClick={() => {
-              if (active === 2) {
-                addWorkoutSession(session)
-                console.log(session)
-              } else {
-                nextStep()
-              }
-            }}
+            type={active === 2 ? 'submit' : 'button'}
+            onClick={nextStep}
             disabled={!isValid}
           >
             {active === 2 ? 'Finish' : 'Next'}
