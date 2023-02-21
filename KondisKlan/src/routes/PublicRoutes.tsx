@@ -1,3 +1,4 @@
+import { WorkoutSessionForm } from 'modules/workoutsession/forms/WorkoutSessionForm'
 import { Route, Routes } from 'react-router-dom'
 import { LandingPage } from '../modules/landing/LandingPage'
 import MainContent from './MainContent'

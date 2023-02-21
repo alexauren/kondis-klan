@@ -1,15 +1,25 @@
-import { useState, useEffect } from 'react'
+import { addDoc, collection } from '@firebase/firestore'
 import {
-  Stepper,
   Button,
+  Card,
   Group,
   Modal,
+  Stepper,
   TextInput,
-  Card,
   Title,
 } from '@mantine/core'
-import { useForm } from '@mantine/form'
 import { DatePicker } from '@mantine/dates'
+import { useForm } from '@mantine/form'
+import { db } from 'containers/Root'
+import { addWorkoutSession } from 'firebase/queries/workoutSessionQueries'
+import { ExerciseForm } from 'modules/workoutsession/forms/ExerciseForm'
+import { WorkoutSession } from 'modules/workoutsession/types'
+import { useEffect, useState } from 'react'
+
+export const submitWorkout = async (values: WorkoutSession) => {
+  const workout = collection(db, 'workoutsessions')
+  await addDoc(workout, values)
+}
 
 export function NewProgram() {
   const [active, setActive] = useState(0)
@@ -22,12 +32,7 @@ export function NewProgram() {
 
   const form = useForm({
     //data for testing purposes
-    //initialValues: { name: "", email: "", Date: "" },
-    initialValues: {
-      name: 'Workout',
-      email: 'john@smith.com',
-      Date: new Date(),
-    },
+    initialValues: { name: '', email: '', Date: new Date() },
     validateInputOnBlur: true,
     validate: {
       name: value =>
@@ -35,6 +40,20 @@ export function NewProgram() {
       email: value => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
     },
   })
+
+  const session: WorkoutSession = {
+    title: 'Upper Body Workout',
+    createdAt: '2023-02-14',
+    createdBy: 'John Doe',
+    exercises: [
+      { name: 'Bench Press', reps: 10, sets: 3, weight: 135 },
+      { name: 'Pull-Ups', reps: 8, sets: 3 },
+      { name: 'Shoulder Press', reps: 12, sets: 3, weight: 50 },
+      { name: 'Planke', sets: 3, duration: 25 },
+    ],
+  }
+
+  han
 
   useEffect(() => {
     setIsValid(Object.keys(form.errors).length === 0)
@@ -72,7 +91,14 @@ export function NewProgram() {
             </form>
           </Stepper.Step>
           <Stepper.Step label="Second step" description="Choose exercises">
-            <Button variant="outline" onClick={() => setOpened(true)}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setOpened(true)
+                //more functions here
+                //submitWorkout(form.values)
+              }}
+            >
               Choose exercises
             </Button>
             <Modal
@@ -80,12 +106,11 @@ export function NewProgram() {
               opened={opened}
               onClose={() => setOpened(false)}
             >
-              *formet til Lasse*
+              <ExerciseForm />
             </Modal>
           </Stepper.Step>
           <Stepper.Completed>
-            Completed, click back button edit your program. registred data:
-            {JSON.stringify(form.values, null, 2)}
+            Completed, click finish to save your program.
           </Stepper.Completed>
         </Stepper>
 
@@ -93,8 +118,18 @@ export function NewProgram() {
           <Button variant="default" onClick={prevStep}>
             Back
           </Button>
-          <Button onClick={nextStep} disabled={!isValid}>
-            {active === 2 ? 'Finish' : 'Next step'}
+          <Button
+            onClick={() => {
+              if (active === 2) {
+                addWorkoutSession(session)
+                console.log(session)
+              } else {
+                nextStep()
+              }
+            }}
+            disabled={!isValid}
+          >
+            {active === 2 ? 'Finish' : 'Next'}
           </Button>
         </Group>
       </Card>

@@ -41,14 +41,6 @@ export function ExerciseForm() {
         errors.name = 'name is required'
       }
 
-      if (!values.reps) {
-        errors.reps = 'Created at is required'
-      }
-
-      if (!values.sets) {
-        errors.sets = 'Created by is required'
-      }
-
       return errors
     },
   })
