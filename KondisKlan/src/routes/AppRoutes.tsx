@@ -1,4 +1,5 @@
-import { auth } from 'containers/Root'
+import { FullContentLoader } from 'components/FullContentLoader'
+import FullPageLoader from 'components/FullPageLoader'
 import { getAuth } from 'firebase/auth'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import PrivateRoutes from 'routes/PrivateRoutes'
@@ -12,7 +13,6 @@ const AppRoutes: React.FC = () => {
   // get logged in user from firebase
   const auth = getAuth()
   const [user, loading, error] = useAuthState(auth)
-  console.log('user: ', user)
 
   if (error) {
     console.error(error)
@@ -20,10 +20,11 @@ const AppRoutes: React.FC = () => {
   }
 
   if (loading) {
-    return <div>Loading...</div>
+    return <FullPageLoader />
   }
 
   if (user) {
+    console.log('now in private routes, possibly skipped user doc creation')
     return <PrivateRoutes />
   }
 

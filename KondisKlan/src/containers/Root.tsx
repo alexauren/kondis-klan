@@ -5,10 +5,10 @@ import { initializeApp } from 'firebase/app'
 import { firebaseConfig } from 'firebase/firebaseConfig'
 import { getFirestore } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
+import { NotificationsProvider } from '@mantine/notifications'
 
 const app = initializeApp(firebaseConfig)
 export const db = getFirestore(app)
-export const auth = getAuth()
 
 function Root() {
   // Root is the top level component that wraps the entire app
@@ -30,9 +30,11 @@ function Root() {
 
   return (
     <MantineProvider theme={mantineTheme}>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
+      <NotificationsProvider>
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </NotificationsProvider>
     </MantineProvider>
   )
 }
