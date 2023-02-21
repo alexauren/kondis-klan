@@ -1,12 +1,12 @@
-import { MantineProvider, MantineThemeOverride } from "@mantine/core";
-import { BrowserRouter } from "react-router-dom";
-import AppRoutes from "routes/AppRoutes";
-import { initializeApp } from "firebase/app";
-import { firebaseConfig } from "firebase/firebaseConfig";
-import { getFirestore } from "firebase/firestore";
+import { MantineProvider, MantineThemeOverride } from '@mantine/core'
+import { BrowserRouter } from 'react-router-dom'
+import AppRoutes from 'routes/AppRoutes'
+import { initializeApp } from 'firebase/app'
+import { firebaseConfig } from 'firebase/firebaseConfig'
+import { getFirestore } from 'firebase/firestore'
 
-const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
+const app = initializeApp(firebaseConfig)
+export const db = getFirestore(app)
 
 function Root() {
   // Root is the top level component that wraps the entire app
@@ -18,13 +18,13 @@ function Root() {
 
   const mantineTheme: MantineThemeOverride = {
     colors: {
-      kondisGreen: ["#c9efc7"],
-      kondisGreenDark: ["#a1d6a3"],
-      kondisGreenLight: ["#e5f7e5"],
+      kondisGreen: ['#c9efc7'],
+      kondisGreenDark: ['#a1d6a3'],
+      kondisGreenLight: ['#e5f7e5'],
     },
     primaryShade: 6,
-    primaryColor: "teal",
-  };
+    primaryColor: 'teal',
+  }
 
   return (
     <MantineProvider theme={mantineTheme}>
@@ -32,7 +32,7 @@ function Root() {
         <AppRoutes />
       </BrowserRouter>
     </MantineProvider>
-  );
+  )
 }
 
-export default Root;
+export default Root

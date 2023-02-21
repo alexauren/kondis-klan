@@ -5,7 +5,7 @@ import {
   SnapshotOptions,
   WithFieldValue,
 } from 'firebase/firestore'
-import { Exercise } from 'modules/exercise/types'
+import { Exercise } from '../exercise/types'
 
 export type WorkoutSession = {
   title: string

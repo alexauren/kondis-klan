@@ -7,25 +7,25 @@ import {
   Text,
   useMantineTheme,
   createStyles,
-} from "@mantine/core";
-import { Link } from "react-router-dom";
-import Logo from "assets/logo.png";
+} from '@mantine/core'
+import { Link } from 'react-router-dom'
+import Logo from 'assets/logo.png'
 
 interface HeaderCustomProps {
-  toggleSidebarCallBack: (sidebarOpen: boolean) => void;
-  sidebarOpen: boolean;
+  toggleSidebarCallBack: (sidebarOpen: boolean) => void
+  sidebarOpen: boolean
 }
 
 export function HeaderCustom({
   toggleSidebarCallBack,
   sidebarOpen,
 }: HeaderCustomProps) {
-  const theme = useMantineTheme();
-  const { classes } = useStyles();
+  const theme = useMantineTheme()
+  const { classes } = useStyles()
   return (
     <Header height={70} p="md">
-      <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
-        <MediaQuery largerThan="xs" styles={{ display: "none" }}>
+      <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+        <MediaQuery largerThan="xs" styles={{ display: 'none' }}>
           <Burger
             opened={!sidebarOpen}
             onClick={() => toggleSidebarCallBack(!sidebarOpen)}
@@ -37,7 +37,7 @@ export function HeaderCustom({
 
         <Group className={classes.header}>
           <Group>
-            <Image src={Logo} radius={"md"} width={48} height={48} />
+            <Image src={Logo} radius={'md'} width={48} height={48} />
             <Text component={Link} to="/" weight={300} size="lg">
               KondisKlan
             </Text>
@@ -45,15 +45,15 @@ export function HeaderCustom({
         </Group>
       </div>
     </Header>
-  );
+  )
 }
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles(theme => ({
   header: {
-    width: "100%",
-    justifyContent: "space-between",
+    width: '100%',
+    justifyContent: 'space-between',
     [`@media (max-width: ${theme.breakpoints.xs}px)`]: {
-      flexDirection: "row-reverse",
+      flexDirection: 'row-reverse',
     },
   },
-}));
+}))
