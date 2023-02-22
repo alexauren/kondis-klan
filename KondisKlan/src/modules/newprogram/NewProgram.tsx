@@ -8,6 +8,7 @@ import {
   Stepper,
   TextInput,
   Title,
+  useMantineTheme,
 } from '@mantine/core'
 import { DatePicker } from '@mantine/dates'
 import { useForm } from '@mantine/form'
@@ -19,11 +20,15 @@ import { Exercise } from 'modules/exercise/types'
 import { ExerciseForm } from 'modules/exercise/form/ExerciseForm'
 import { WorkoutSession } from 'modules/workoutsession/types'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { showNotification } from '@mantine/notifications'
 
 export function NewProgram() {
+  const theme = useMantineTheme()
+  const navigate = useNavigate()
   const [active, setActive] = useState(0)
   const [opened, setOpened] = useState(false)
-  const [isValid, setIsValid] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [exerciseList, setExerciseList] = useState<Exercise[]>([])
   const [date, setDate] = useState<Date | null>(null)
 
@@ -40,13 +45,23 @@ export function NewProgram() {
     {
       date ? (values.createdAt = date) : null
     }
+    setIsSubmitting(true)
 
-    addWorkoutSession(values).then(function (docRef) {
-      console.log('Document written with ID: ', docRef.id)
-      exerciseList.forEach(exercise => {
-        addExerciseDocument(docRef.id, exercise)
+    addWorkoutSession(values)
+      .then(function (docRef) {
+        console.log('Document written with ID: ', docRef.id)
+        exerciseList.forEach(exercise => {
+          addExerciseDocument(docRef.id, exercise)
+        })
       })
-    })
+      .then(() => {
+        showNotification({
+          title: 'Programmet ble opprettet',
+          message: 'Du kan nå se programmet i programoversikten',
+          color: 'teal',
+        })
+        navigate('/')
+      })
   }
 
   function handleNextStep() {
@@ -74,15 +89,10 @@ export function NewProgram() {
       setActive(active - 1)
     }
   }
-
-  useEffect(() => {
-    setIsValid(Object.keys(form.errors).length === 0)
-  }, [form.errors])
-
   return (
     <>
       <Card withBorder shadow={'sm'}>
-        <Title> New Program</Title>
+        <Title order={2}>Opprett økt</Title>
         <form onSubmit={form.onSubmit(values => handleSubmit(values))}>
           <Stepper
             active={active}
@@ -90,10 +100,7 @@ export function NewProgram() {
             breakpoint="sm"
             mt="md"
           >
-            <Stepper.Step
-              label="First step"
-              description="Opprett et nytt program"
-            >
+            <Stepper.Step label="Steg 1" description="Opprett et nytt program">
               <TextInput
                 withAsterisk
                 label="Tittel"
@@ -134,14 +141,18 @@ export function NewProgram() {
                   setOpened={setOpened}
                 />
               </Modal>
-              <SimpleGrid cols={2}>
+              <SimpleGrid
+                mt={'sm'}
+                cols={2}
+                breakpoints={[{ maxWidth: theme.breakpoints.sm, cols: 1 }]}
+              >
                 {exerciseList.map((exercise, index) => (
                   <ExerciseCard key={index} exercise={exercise} />
                 ))}
               </SimpleGrid>
             </Stepper.Step>
             <Stepper.Completed>
-              Completed, click finish to save your program.
+              Ferdig, klikk for å legge til økten!
             </Stepper.Completed>
           </Stepper>
 
@@ -156,7 +167,7 @@ export function NewProgram() {
             <Button
               type={active === 3 ? 'submit' : 'button'}
               onClick={handleNextStep}
-              disabled={!isValid}
+              disabled={isSubmitting}
             >
               {active === 2 ? 'Finish' : 'Next'}
             </Button>

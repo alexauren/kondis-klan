@@ -21,11 +21,10 @@ import { format } from 'date-fns'
 //interface
 interface WorkoutCard {
   workoutsession: WorkoutSessionWithTimestamp
-  exercises: Exercise[]
 }
 
 //component
-export function WorkoutCard({ workoutsession, exercises }: WorkoutCard) {
+export function WorkoutCard({ workoutsession }: WorkoutCard) {
   const { data, error, loading } = useExerciseCollection(workoutsession.id)
 
   if (loading) {
