@@ -41,11 +41,10 @@ export async function addExerciseDocument(
   data: Exercise
 ) {
   //use addDoc to add a document to the collection
-  const docRef = await addDoc(
+  return await addDoc(
     collection(db, `workoutsessions/${workoutSessionRef}/exercises`),
     data
   )
-  console.log('Document written with ID: ', docRef.id)
 }
 
 async function removeExerciseDocument(

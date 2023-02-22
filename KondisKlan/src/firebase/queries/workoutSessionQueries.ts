@@ -36,7 +36,7 @@ export function useWorkoutSessionDocument(workoutSessionId: string) {
 
 export async function addWorkoutSession(workoutSession: WorkoutSession) {
   //use addDoc to add a document to the collection
-  await addDoc(collection(db, 'workoutsessions'), workoutSession)
+  return await addDoc(collection(db, 'workoutsessions'), workoutSession)
 }
 
 export async function updateWorkoutSession(

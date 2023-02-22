@@ -4,12 +4,14 @@ import { ExerciseCard } from 'modules/exercise/components/ExerciseCard'
 import {
   WorkoutSession,
   WorkoutSessionDocument,
+  WorkoutSessionWithTimestamp,
 } from 'modules/workoutsession/types'
 import { useExerciseCollection } from 'firebase/queries/exerciseQueries'
+import { format } from 'date-fns'
 
 //interface
 interface WorkoutCard {
-  workoutsession: WorkoutSessionDocument
+  workoutsession: WorkoutSessionWithTimestamp
   exercises: Exercise[]
 }
 
@@ -31,14 +33,18 @@ export function WorkoutCard({ workoutsession, exercises }: WorkoutCard) {
 
   const exercises2 = data as Exercise[]
 
+  const createdAtToString = format(
+    workoutsession.createdAt.toDate(),
+    'dd.MM.yyyy'
+  )
+
   return (
-    // <Container size="lg">
     <Card withBorder shadow={'sm'}>
       <Title order={3}>{workoutsession.title}</Title>
 
       <Text>
         <Text>Lagd av: {workoutsession.createdBy}</Text>
-        <Text>Den {workoutsession.createdAt}</Text>
+        <Text>Den {createdAtToString}</Text>
       </Text>
       <SimpleGrid
         cols={3}

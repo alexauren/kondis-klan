@@ -4,6 +4,7 @@ import {
   Card,
   Group,
   Modal,
+  SimpleGrid,
   Stepper,
   TextInput,
   Title,
@@ -11,38 +12,23 @@ import {
 import { DatePicker } from '@mantine/dates'
 import { useForm } from '@mantine/form'
 import { db } from 'containers/Root'
+import { addExerciseDocument } from 'firebase/queries/exerciseQueries'
 import { addWorkoutSession } from 'firebase/queries/workoutSessionQueries'
+import { ExerciseCard } from 'modules/exercise/components/ExerciseCard'
 import { Exercise } from 'modules/exercise/types'
 import { ExerciseForm } from 'modules/workoutsession/forms/ExerciseForm'
 import { WorkoutSession } from 'modules/workoutsession/types'
 import { useEffect, useState } from 'react'
 
-export const submitWorkout = async (values: WorkoutSession) => {
-  const workout = collection(db, 'workoutsessions')
-  await addDoc(workout, values)
-}
-
 export function NewProgram() {
   const [active, setActive] = useState(0)
-  const nextStep = () =>
-    setActive(current => (current < 2 ? current + 1 : current))
-  const prevStep = () =>
-    setActive(current => (current > 0 ? current - 1 : current))
   const [opened, setOpened] = useState(false)
   const [isValid, setIsValid] = useState(false)
   const [exerciseList, setExerciseList] = useState<Exercise[]>([])
-
-  const currentDate = new Date()
-    .toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    })
-    .replace(/\//g, '.')
+  const [date, setDate] = useState<Date | null>(null)
 
   const form = useForm<WorkoutSession>({
-    initialValues: { title: '', createdBy: '', createdAt: currentDate },
-    validateInputOnBlur: true,
+    initialValues: { title: '', createdBy: '', createdAt: '' },
     validate: {
       title: value =>
         value.length < 2 ? 'Name must have at least 2 letters' : null,
@@ -51,8 +37,42 @@ export function NewProgram() {
   })
 
   function handleSubmit(values: WorkoutSession) {
-    values.exercises = exerciseList
-    submitWorkout(values)
+    {
+      date ? (values.createdAt = date) : null
+    }
+
+    addWorkoutSession(values).then(function (docRef) {
+      console.log('Document written with ID: ', docRef.id)
+      exerciseList.forEach(exercise => {
+        addExerciseDocument(docRef.id, exercise)
+      })
+    })
+  }
+
+  function handleNextStep() {
+    console.log('active: ' + active)
+    if (active === 2) {
+      handleSubmit(form.values)
+    }
+    if (active === 1) {
+      //validate that exercises are chosen
+      if (exerciseList.length > 0) {
+        setActive(active + 1)
+      }
+    }
+
+    if (active === 0) {
+      //validate that title and createdBy is filled out
+      if (form.values.title && form.values.createdBy) {
+        setActive(active + 1)
+      }
+    }
+  }
+
+  function handlePreviousStep() {
+    if (active > 0) {
+      setActive(active - 1)
+    }
   }
 
   useEffect(() => {
@@ -63,68 +83,85 @@ export function NewProgram() {
     <>
       <Card withBorder shadow={'sm'}>
         <Title> New Program</Title>
-        <Stepper
-          active={active}
-          onStepClick={setActive}
-          breakpoint="sm"
-          mt="md"
-        >
-          <Stepper.Step label="First step" description="Create a new program">
-            <form onSubmit={form.onSubmit(values => handleSubmit(values))}>
+        <form onSubmit={form.onSubmit(values => handleSubmit(values))}>
+          <Stepper
+            active={active}
+            onStepClick={setActive}
+            breakpoint="sm"
+            mt="md"
+          >
+            <Stepper.Step
+              label="First step"
+              description="Opprett et nytt program"
+            >
               <TextInput
                 withAsterisk
-                label="Name of program"
+                label="Tittel"
                 placeholder="Push, Pull, Legs"
                 {...form.getInputProps('title')}
               />
               <TextInput
                 mt="sm"
-                label="Createdby (will be auto filled)"
+                label="Laget av (skal fjernes)"
                 placeholder="john@smith.com"
                 {...form.getInputProps('createdBy')}
               />
-              {/* <DatePicker
+              <DatePicker
                 label="Created date"
                 placeholder="Choose date"
-                {...form.getInputProps('createdAt')}
-              /> */}
-              <Button type="submit">Submit</Button>
-            </form>
-          </Stepper.Step>
-          <Stepper.Step label="Second step" description="Choose exercises">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setOpened(true)
-              }}
-            >
-              Choose exercises
-            </Button>
-            <Modal
-              title="Choose exercises"
-              opened={opened}
-              onClose={() => setOpened(false)}
-            >
-              <ExerciseForm exerciseList={exerciseList} setOpened={setOpened} />
-            </Modal>
-          </Stepper.Step>
-          <Stepper.Completed>
-            Completed, click finish to save your program.
-          </Stepper.Completed>
-        </Stepper>
+                value={date}
+                onChange={setDate}
+              />
+            </Stepper.Step>
+            <Stepper.Step label="Second step" description="Choose exercises">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setOpened(true)
+                }}
+              >
+                Choose exercises
+              </Button>
+              <Modal
+                title="Choose exercises"
+                size={'lg'}
+                opened={opened}
+                onClose={() => setOpened(false)}
+              >
+                <ExerciseForm
+                  exerciseList={exerciseList}
+                  setExerciseListCallback={setExerciseList}
+                  setOpened={setOpened}
+                />
+              </Modal>
+              <SimpleGrid cols={2}>
+                {exerciseList.map((exercise, index) => (
+                  <ExerciseCard key={index} exercise={exercise} />
+                ))}
+              </SimpleGrid>
+            </Stepper.Step>
+            <Stepper.Completed>
+              Completed, click finish to save your program.
+            </Stepper.Completed>
+          </Stepper>
 
-        <Group position="center" mt="xl">
-          <Button variant="default" onClick={prevStep}>
-            Back
-          </Button>
-          <Button
-            type={active === 2 ? 'submit' : 'button'}
-            onClick={nextStep}
-            disabled={!isValid}
-          >
-            {active === 2 ? 'Finish' : 'Next'}
-          </Button>
-        </Group>
+          <Group position="center" mt="xl">
+            <Button
+              variant="default"
+              disabled={active == 0}
+              onClick={handlePreviousStep}
+            >
+              Back
+            </Button>
+            <Button
+              type={active === 3 ? 'submit' : 'button'}
+              onClick={handleNextStep}
+              disabled={!isValid}
+            >
+              {active === 2 ? 'Finish' : 'Next'}
+            </Button>
+          </Group>
+        </form>
       </Card>
     </>
   )
