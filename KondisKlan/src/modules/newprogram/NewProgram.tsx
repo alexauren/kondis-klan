@@ -16,7 +16,7 @@ import { addExerciseDocument } from 'firebase/queries/exerciseQueries'
 import { addWorkoutSession } from 'firebase/queries/workoutSessionQueries'
 import { ExerciseCard } from 'modules/exercise/components/ExerciseCard'
 import { Exercise } from 'modules/exercise/types'
-import { ExerciseForm } from 'modules/workoutsession/forms/ExerciseForm'
+import { ExerciseForm } from 'modules/exercise/form/ExerciseForm'
 import { WorkoutSession } from 'modules/workoutsession/types'
 import { useEffect, useState } from 'react'
 

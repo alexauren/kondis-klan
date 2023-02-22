@@ -12,7 +12,7 @@ import { db } from 'containers/Root'
 import { ExerciseCard } from 'modules/exercise/components/ExerciseCard'
 import { determineExerciseType } from 'modules/exercise/util'
 import { useState } from 'react'
-import { Exercise } from '../../exercise/types'
+import { Exercise } from '../types'
 
 interface ExerciseFormProps {
   setExerciseListCallback: (exerciseList: Exercise[]) => void

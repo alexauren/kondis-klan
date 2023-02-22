@@ -6,7 +6,6 @@ export function WorkoutSessionDetail() {
   return (
     <Stack>
       <h2>Velkommen tilbake!</h2>
-      <NewProgram />
       <WorkoutSessionFeed />
     </Stack>
   )
