@@ -1,4 +1,11 @@
-import { Text, Container, Title, SimpleGrid, Card } from '@mantine/core'
+import {
+  Text,
+  Container,
+  Title,
+  SimpleGrid,
+  Card,
+  Skeleton,
+} from '@mantine/core'
 import { Exercise } from 'modules/exercise/types'
 import { ExerciseCard } from 'modules/exercise/components/ExerciseCard'
 import {
@@ -7,6 +14,8 @@ import {
   WorkoutSessionWithTimestamp,
 } from 'modules/workoutsession/types'
 import { useExerciseCollection } from 'firebase/queries/exerciseQueries'
+import { FullContentLoader } from 'components/FullContentLoader'
+import { EmptyLoader } from 'components/EmptyLoader'
 import { format } from 'date-fns'
 
 //interface
@@ -20,7 +29,7 @@ export function WorkoutCard({ workoutsession, exercises }: WorkoutCard) {
   const { data, error, loading } = useExerciseCollection(workoutsession.id)
 
   if (loading) {
-    return <div>Loading...</div>
+    return <EmptyLoader />
   }
 
   if (error) {
