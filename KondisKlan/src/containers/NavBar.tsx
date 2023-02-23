@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useState } from 'react'
 import {
   Navbar,
   Center,
@@ -9,6 +10,7 @@ import {
   Stack,
   Image,
   Group,
+} from '@mantine/core'
 } from '@mantine/core'
 import {
   Icon,
@@ -40,6 +42,8 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
         className={cx(classes.link, { [classes.active]: active })}
       >
         <Group>
+          {isMobile && <Text>{label}</Text>}
+          <Icon stroke={1.5} />
           {isMobile && <Text>{label}</Text>}
           <Icon stroke={1.5} />
         </Group>
