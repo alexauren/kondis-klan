@@ -4,6 +4,8 @@ import AppRoutes from 'routes/AppRoutes'
 import { initializeApp } from 'firebase/app'
 import { firebaseConfig } from 'firebase/firebaseConfig'
 import { getFirestore } from 'firebase/firestore'
+import { getAuth } from 'firebase/auth'
+import { NotificationsProvider } from '@mantine/notifications'
 
 const app = initializeApp(firebaseConfig)
 export const db = getFirestore(app)
@@ -28,9 +30,11 @@ function Root() {
 
   return (
     <MantineProvider theme={mantineTheme}>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
+      <NotificationsProvider>
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </NotificationsProvider>
     </MantineProvider>
   )
 }
