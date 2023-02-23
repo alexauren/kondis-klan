@@ -9,6 +9,7 @@ import {
   Stack,
   Image,
   Group,
+  Button,
 } from '@mantine/core'
 import {
   Icon,
@@ -30,6 +31,7 @@ interface NavbarLinkProps {
   active?: boolean
   onClick?(): void
   to: string
+  disabled?: boolean
 }
 
 function NavbarLink({
@@ -38,6 +40,7 @@ function NavbarLink({
   active,
   onClick,
   link,
+  disabled,
 }: NavbarLinkProps) {
   const { classes, cx } = useStyles()
   const isMobile = useMobile()
@@ -45,13 +48,11 @@ function NavbarLink({
     <Tooltip label={label} withinPortal position="right" transitionDuration={0}>
       <UnstyledButton
         component={Link}
-        to={link}
+        to={disabled ? '#' : link}
         onClick={onClick}
         className={cx(classes.link, { [classes.active]: active })}
       >
         <Group>
-          {isMobile && <Text>{label}</Text>}
-          <Icon stroke={1.5} />
           {isMobile && <Text>{label}</Text>}
           <Icon stroke={1.5} />
         </Group>
@@ -60,14 +61,6 @@ function NavbarLink({
   )
 }
 
-const mockdata = [
-  { icon: IconHome2, label: 'Home', link: '/' },
-  { icon: IconPlus, label: 'New program', link: '/newprogram' },
-  { icon: IconUser, label: 'Profile', link: '/profile' },
-  { icon: IconSettings, label: 'Settings', link: '/settings' },
-  { icon: IconLogout, label: 'Logout', link: '/login' },
-]
-
 interface NavbarMinimalProps {
   isHidden: boolean
 }
@@ -75,6 +68,14 @@ interface NavbarMinimalProps {
 export default function NavbarMinimal({ isHidden }: NavbarMinimalProps) {
   const [active, setActive] = useState(0)
   const auth = getAuth()
+  const loggedInUser = auth.currentUser
+
+  const mockdata = [
+    { icon: IconHome2, label: 'Hjem', link: '/' },
+    { icon: IconPlus, label: 'Ny økt', link: '/newprogram' },
+    { icon: IconUser, label: 'Profil', link: `/profile/${loggedInUser!.uid}` },
+    { icon: IconSettings, label: 'Innstillinger', link: '/settings' },
+  ]
 
   const links = mockdata.map((link, index) => (
     <NavbarLink
