@@ -9,6 +9,7 @@ import {
   Stack,
   Image,
   Group,
+  Button,
 } from '@mantine/core'
 import {
   Icon,
@@ -20,8 +21,8 @@ import {
 } from '@tabler/icons-react'
 import Logo from 'assets/logo.png'
 import { useMobile } from 'util/hooks'
-import { getAuth, signOut } from 'firebase/auth'
 import { Link } from 'react-router-dom'
+import { getAuth, signOut } from 'firebase/auth'
 
 interface NavbarLinkProps {
   icon: Icon
@@ -29,6 +30,8 @@ interface NavbarLinkProps {
   label: string
   active?: boolean
   onClick?(): void
+  to: string
+  disabled?: boolean
 }
 
 function NavbarLink({
@@ -37,6 +40,7 @@ function NavbarLink({
   active,
   onClick,
   link,
+  disabled,
 }: NavbarLinkProps) {
   const { classes, cx } = useStyles()
   const isMobile = useMobile()
@@ -44,7 +48,7 @@ function NavbarLink({
     <Tooltip label={label} withinPortal position="right" transitionDuration={0}>
       <UnstyledButton
         component={Link}
-        to={link}
+        to={disabled ? '#' : link}
         onClick={onClick}
         className={cx(classes.link, { [classes.active]: active })}
       >
@@ -57,13 +61,6 @@ function NavbarLink({
   )
 }
 
-const mockdata = [
-  { icon: IconHome2, label: 'Home', link: '' },
-  { icon: IconPlus, label: 'New program', link: 'newprogram' },
-  { icon: IconUser, label: 'Account', link: 'account' },
-  { icon: IconSettings, label: 'Settings', link: 'settings' },
-]
-
 interface NavbarMinimalProps {
   isHidden: boolean
 }
@@ -71,6 +68,14 @@ interface NavbarMinimalProps {
 export default function NavbarMinimal({ isHidden }: NavbarMinimalProps) {
   const [active, setActive] = useState(0)
   const auth = getAuth()
+  const loggedInUser = auth.currentUser
+
+  const mockdata = [
+    { icon: IconHome2, label: 'Hjem', link: '/' },
+    { icon: IconPlus, label: 'Ny økt', link: '/newprogram' },
+    { icon: IconUser, label: 'Profil', link: `/profile/${loggedInUser!.uid}` },
+    { icon: IconSettings, label: 'Innstillinger', link: '/settings' },
+  ]
 
   const links = mockdata.map((link, index) => (
     <NavbarLink
@@ -78,6 +83,7 @@ export default function NavbarMinimal({ isHidden }: NavbarMinimalProps) {
       key={link.label}
       active={index === active}
       onClick={() => setActive(index)}
+      to={link.link}
     />
   ))
 
@@ -103,6 +109,7 @@ export default function NavbarMinimal({ isHidden }: NavbarMinimalProps) {
         <Stack justify="center" spacing={0}>
           <NavbarLink
             link="/"
+            to="/"
             icon={IconLogout}
             label="Logout"
             onClick={() => signOut(auth)}
