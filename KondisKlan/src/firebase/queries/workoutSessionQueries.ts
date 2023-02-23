@@ -5,6 +5,8 @@ import {
   doc,
   DocumentData,
   getDocs,
+  orderBy,
+  query,
   setDoc,
 } from 'firebase/firestore'
 import {
@@ -20,9 +22,11 @@ import {
 
 export function useWorkoutSessionCollection() {
   //use useCollectionData to get the data from the collection
-  const [data, loading, error] = useCollectionData<DocumentData>(
-    collection(db, 'workoutsessions').withConverter(workoutSessionConverter)
+  const collectionRef = collection(db, 'workoutsessions').withConverter(
+    workoutSessionConverter
   )
+  const querydata = query(collectionRef, orderBy('createdAt', 'desc'))
+  const [data, loading, error] = useCollectionData<DocumentData>(querydata)
   return { data, loading, error }
 }
 
@@ -36,7 +40,7 @@ export function useWorkoutSessionDocument(workoutSessionId: string) {
 
 export async function addWorkoutSession(workoutSession: WorkoutSession) {
   //use addDoc to add a document to the collection
-  await addDoc(collection(db, 'workoutsessions'), workoutSession)
+  return await addDoc(collection(db, 'workoutsessions'), workoutSession)
 }
 
 export async function updateWorkoutSession(

@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useState } from 'react'
 import {
   Navbar,
   Center,
@@ -11,7 +10,6 @@ import {
   Image,
   Group,
 } from '@mantine/core'
-} from '@mantine/core'
 import {
   Icon,
   IconHome2,
@@ -22,22 +20,32 @@ import {
 } from '@tabler/icons-react'
 import Logo from 'assets/logo.png'
 import { useMobile } from 'util/hooks'
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { getAuth, signOut } from 'firebase/auth'
 
 interface NavbarLinkProps {
   icon: Icon
+  link: string
   label: string
   active?: boolean
   onClick?(): void
   to: string
 }
 
-function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
+function NavbarLink({
+  icon: Icon,
+  label,
+  active,
+  onClick,
+  link,
+}: NavbarLinkProps) {
   const { classes, cx } = useStyles()
   const isMobile = useMobile()
   return (
     <Tooltip label={label} withinPortal position="right" transitionDuration={0}>
       <UnstyledButton
+        component={Link}
+        to={link}
         onClick={onClick}
         className={cx(classes.link, { [classes.active]: active })}
       >
@@ -66,20 +74,14 @@ interface NavbarMinimalProps {
 
 export default function NavbarMinimal({ isHidden }: NavbarMinimalProps) {
   const [active, setActive] = useState(0)
-
-  let navigate = useNavigate()
-
-  function click(link: string, index: number) {
-    navigate(link)
-    return setActive(index)
-  }
+  const auth = getAuth()
 
   const links = mockdata.map((link, index) => (
     <NavbarLink
       {...link}
       key={link.label}
       active={index === active}
-      onClick={() => click(link.link, index)}
+      onClick={() => setActive(index)}
       to={link.link}
     />
   ))
@@ -104,7 +106,13 @@ export default function NavbarMinimal({ isHidden }: NavbarMinimalProps) {
       </Navbar.Section>
       <Navbar.Section>
         <Stack justify="center" spacing={0}>
-          <NavbarLink icon={IconLogout} label="Logout" to="/login" />
+          <NavbarLink
+            link="/"
+            to="/"
+            icon={IconLogout}
+            label="Logout"
+            onClick={() => signOut(auth)}
+          />
         </Stack>
       </Navbar.Section>
     </Navbar>

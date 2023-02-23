@@ -3,19 +3,26 @@ import {
   FirestoreDataConverter,
   QueryDocumentSnapshot,
   SnapshotOptions,
+  Timestamp,
   WithFieldValue,
 } from 'firebase/firestore'
 import { Exercise } from '../exercise/types'
 
 export type WorkoutSession = {
   title: string
-  createdAt: string
+  createdAt: string | Date
   createdBy: string
-  exercises?: Exercise[]
 }
 
 export type WorkoutSessionDocument = WorkoutSession & {
   id: string
+}
+
+export type WorkoutSessionWithTimestamp = Omit<
+  WorkoutSessionDocument,
+  'createdAt'
+> & {
+  createdAt: Timestamp
 }
 
 export const workoutSessionConverter: FirestoreDataConverter<WorkoutSessionDocument> =
@@ -27,7 +34,6 @@ export const workoutSessionConverter: FirestoreDataConverter<WorkoutSessionDocum
         title: workoutSession.title,
         createdAt: workoutSession.createdAt,
         createdBy: workoutSession.createdBy,
-        exercises: workoutSession.exercises,
       }
     },
     fromFirestore(
@@ -40,7 +46,6 @@ export const workoutSessionConverter: FirestoreDataConverter<WorkoutSessionDocum
         title: data.title,
         createdAt: data.createdAt,
         createdBy: data.createdBy,
-        exercises: data.exercises,
       }
     },
   }
