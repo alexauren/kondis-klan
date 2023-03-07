@@ -8,6 +8,7 @@ import {
   orderBy,
   query,
   setDoc,
+  where,
 } from 'firebase/firestore'
 import {
   useCollectionData,
@@ -61,4 +62,17 @@ export async function deleteWorkoutSession(workoutSessionId: string) {
   })
 
   await deleteDoc(doc(db, workoutSessionId))
+}
+
+export function useMyWorkouts(userId: string) {
+  const collectionRef = collection(db, 'workoutsessions').withConverter(
+    workoutSessionConverter
+  )
+  const querydata = query(
+    collectionRef,
+    orderBy('createdAt', 'desc'),
+    where('createdBy', '==', userId)
+  )
+  const [data, loading, error] = useCollectionData<DocumentData>(querydata)
+  return { data, loading, error }
 }

@@ -20,8 +20,10 @@ import { FullContentLoader } from 'components/FullContentLoader'
 import FullPageError from 'components/FullPageError'
 import { db } from 'containers/Root'
 import { collection, doc } from 'firebase/firestore'
+import { WorkoutSessionFeed } from 'modules/workoutsession/components/WorkoutSessionFeed'
 import { useDocument, useDocumentData } from 'react-firebase-hooks/firestore'
 import { useParams } from 'react-router-dom'
+import { MyWorkouts } from '../Components/MyWorkouts'
 
 const useStyles = createStyles(theme => ({
   detailsWrapper: {
@@ -81,8 +83,8 @@ function UserDetail() {
   const user = value
 
   return (
-    <div className={classes.detailsWrapper}>
-      <Container mt={'lg'} size={700}>
+    <Stack justify="flex-start">
+      <div>
         <Title order={2} className={classes.title} mb="md">
           Profil
         </Title>
@@ -105,8 +107,18 @@ function UserDetail() {
             </div>
           )}
         </Paper>
-      </Container>
-    </div>
+      </div>
+      <Group noWrap>
+        <Container>
+          <Title> Completed Workouts</Title>
+          <MyWorkouts userId={userId} />
+        </Container>
+        <Container>
+          <Title> My Workouts</Title>
+          <WorkoutSessionFeed />
+        </Container>
+      </Group>
+    </Stack>
   )
 }
 
