@@ -151,6 +151,11 @@ export function NewProgram() {
                 ))}
               </SimpleGrid>
             </Stepper.Step>
+            <Stepper.Step
+              label="Third step"
+              description="Choose tags"
+            ></Stepper.Step>
+
             <Stepper.Completed>
               Ferdig, klikk for å legge til økten!
             </Stepper.Completed>
