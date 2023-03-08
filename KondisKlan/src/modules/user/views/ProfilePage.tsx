@@ -14,6 +14,7 @@ import {
   Space,
   List,
   ThemeIcon,
+  Checkbox,
 } from '@mantine/core'
 import { IconAt, IconBuilding, IconPhoneCall } from '@tabler/icons-react'
 import { FullContentLoader } from 'components/FullContentLoader'
@@ -22,6 +23,65 @@ import { db } from 'containers/Root'
 import { collection, doc } from 'firebase/firestore'
 import { useDocument, useDocumentData } from 'react-firebase-hooks/firestore'
 import { useParams } from 'react-router-dom'
+import { updateUserVisibility } from 'firebase/queries/userQueries'
+import { useState } from 'react'
+
+function UserDetail() {
+  const { classes } = useStyles()
+  const { userId } = useParams() as { userId: string }
+  const userRef = doc(db, 'users', userId)
+  const [value, loading, error] = useDocumentData(userRef)
+  const user = value
+  //True needs to be changed to reflect the actual settings
+  const [isChecked, setIsChecked] = useState(true)
+  if (loading) {
+    return <FullContentLoader />
+  }
+  if (error) {
+    return <FullPageError />
+  }
+
+  return (
+    <div className={classes.detailsWrapper}>
+      <Container mt={'lg'} size={700}>
+        <Title order={2} className={classes.title} mb="md">
+          Profil
+        </Title>
+        <Paper shadow={'sm'} p={'lg'} className={classes.paper}>
+          {user && (
+            <div className={classes.detailsCard}>
+              <Group position="apart">
+                <div>
+                  <Space h={'xs'} />
+                  <Text className={classes.name}>{user.name}</Text>
+                  <Divider my={'sm'} />
+                  <Group noWrap spacing={10} mt={3}>
+                    <IconAt />
+                    <Text size="sm" color="dimmed">
+                      {user.email}
+                    </Text>
+                  </Group>
+                </div>
+              </Group>
+              <Checkbox
+                checked={user.public}
+                onClick={() => {
+                  setIsChecked(!isChecked)
+                }}
+                onChange={() => {
+                  updateUserVisibility(userId, isChecked)
+                }}
+                label="I want my profile to be public"
+              />
+            </div>
+          )}
+        </Paper>
+      </Container>
+    </div>
+  )
+}
+
+export default UserDetail
 
 const useStyles = createStyles(theme => ({
   detailsWrapper: {
@@ -65,49 +125,3 @@ const useStyles = createStyles(theme => ({
     color: theme.colors.gray[6],
   },
 }))
-
-function UserDetail() {
-  const { classes } = useStyles()
-  const { userId } = useParams() as { userId: string }
-  const userRef = doc(db, 'users', userId)
-  const [value, loading, error] = useDocumentData(userRef)
-  if (loading) {
-    return <FullContentLoader />
-  }
-  if (error) {
-    return <FullPageError />
-  }
-
-  const user = value
-
-  return (
-    <div className={classes.detailsWrapper}>
-      <Container mt={'lg'} size={700}>
-        <Title order={2} className={classes.title} mb="md">
-          Profil
-        </Title>
-        <Paper shadow={'sm'} p={'lg'} className={classes.paper}>
-          {user && (
-            <div className={classes.detailsCard}>
-              <Group position="apart">
-                <div>
-                  <Space h={'xs'} />
-                  <Text className={classes.name}>{user.name}</Text>
-                  <Divider my={'sm'} />
-                  <Group noWrap spacing={10} mt={3}>
-                    <IconAt />
-                    <Text size="sm" color="dimmed">
-                      {user.email}
-                    </Text>
-                  </Group>
-                </div>
-              </Group>
-            </div>
-          )}
-        </Paper>
-      </Container>
-    </div>
-  )
-}
-
-export default UserDetail
