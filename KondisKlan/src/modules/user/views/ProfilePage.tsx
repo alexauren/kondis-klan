@@ -15,6 +15,7 @@ import {
   List,
   ThemeIcon,
   Checkbox,
+  MultiSelect,
 } from '@mantine/core'
 import { IconAt, IconBuilding, IconPhoneCall } from '@tabler/icons-react'
 import { FullContentLoader } from 'components/FullContentLoader'
@@ -23,21 +24,29 @@ import { db } from 'containers/Root'
 import { collection, doc } from 'firebase/firestore'
 import { useDocument, useDocumentData } from 'react-firebase-hooks/firestore'
 import { useParams } from 'react-router-dom'
-import { updateUserVisibility } from 'firebase/queries/userQueries'
+import {
+  setUserInterests,
+  updateUserVisibility,
+  updateTagsCollection,
+} from 'firebase/queries/userQueries'
 import { useState } from 'react'
 
 function UserDetail() {
   const { classes } = useStyles()
   const { userId } = useParams() as { userId: string }
   const userRef = doc(db, 'users', userId)
-  const [value, loading, error] = useDocumentData(userRef)
+  const [value, loadingUser, errorUser] = useDocumentData(userRef)
   const user = value
+  const [tagsFromDB, loadingTags, errorTags] = useDocumentData(
+    doc(db, 'tags', 'ZP3S5zqtbEnjYZRvKMxB')
+  )
+  const tagList = tagsFromDB?.tags
   //True needs to be changed to reflect the actual settings
   const [isChecked, setIsChecked] = useState(true)
-  if (loading) {
+  if (loadingUser || loadingTags) {
     return <FullContentLoader />
   }
-  if (error) {
+  if (errorUser || errorTags) {
     return <FullPageError />
   }
 
@@ -71,7 +80,31 @@ function UserDetail() {
                 onChange={() => {
                   updateUserVisibility(userId, isChecked)
                 }}
-                label="I want my profile to be public"
+                label="Jeg vil at profilen min skal være offentlig"
+              />
+              <MultiSelect
+                label="Mine interesser"
+                data={tagList} //replace with all tags
+                placeholder="Velg interesser"
+                nothingFound="Ingen funnet"
+                searchable
+                multiple
+                creatable
+                getCreateLabel={tags => `+ Legg til ${tags}`}
+                onChange={tags => {
+                  // set of strings
+                  setUserInterests(userId, tags)
+                  updateTagsCollection(tags)
+                  console.log(tags)
+                  return tags
+                }}
+
+                /* onCreate={(tag) => {
+                    user.interests.push(tag)
+                    setUserInterests(userId, user.interests)
+                    console.log(user.interests)                    
+                    return tag;
+                  }} */
               />
             </div>
           )}
