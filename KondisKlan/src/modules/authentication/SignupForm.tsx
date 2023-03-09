@@ -25,6 +25,7 @@ import { addDoc, collection, setDoc, doc } from 'firebase/firestore'
 import { db } from 'containers/Root'
 import { useState } from 'react'
 import { IconCheck } from '@tabler/icons-react'
+import { createUserDoc } from 'firebase/queries/userQueries'
 
 export function SignUp() {
   const auth = getAuth()
@@ -96,6 +97,7 @@ export function SignUp() {
         placeholder=""
         {...form.getInputProps('name')}
       />
+
       <Group position="apart" my="sm">
         <Button variant="outline" component={Link} to="/">
           Tilbake
@@ -104,13 +106,4 @@ export function SignUp() {
       </Group>
     </form>
   )
-}
-
-async function createUserDoc({ uid, email }: UserInfo, displayName: string) {
-  await setDoc(doc(db, 'users', uid), {
-    uid: uid,
-    name: displayName,
-    authProvider: 'local',
-    email: email,
-  })
 }
