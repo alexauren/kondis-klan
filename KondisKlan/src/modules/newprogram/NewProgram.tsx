@@ -1,4 +1,14 @@
-import { addDoc, collection } from '@firebase/firestore'
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  DocumentData,
+  getDocs,
+  orderBy,
+  query,
+  setDoc,
+} from '@firebase/firestore'
 import {
   Button,
   Card,
@@ -18,10 +28,18 @@ import { addWorkoutSession } from 'firebase/queries/workoutSessionQueries'
 import { ExerciseCard } from 'modules/exercise/components/ExerciseCard'
 import { Exercise } from 'modules/exercise/types'
 import { ExerciseForm } from 'modules/exercise/form/ExerciseForm'
-import { WorkoutSession } from 'modules/workoutsession/types'
+import {
+  WorkoutSession,
+  workoutSessionConverter,
+} from 'modules/workoutsession/types'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { showNotification } from '@mantine/notifications'
+import { MultiSelect } from '@mantine/core'
+import {
+  useCollectionData,
+  useDocumentData,
+} from 'react-firebase-hooks/firestore'
 
 export function NewProgram() {
   const theme = useMantineTheme()
@@ -31,6 +49,16 @@ export function NewProgram() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [exerciseList, setExerciseList] = useState<Exercise[]>([])
   const [date, setDate] = useState<Date | null>(null)
+
+  const [data, setData] = useState([{}])
+
+  function getTags() {
+    const collectionRef = collection(db, 'workoutsessions')
+    const [data, loading, error] =
+      useCollectionData<DocumentData>(collectionRef)
+    console.log({ data, loading, error })
+    return { data, loading, error }
+  }
 
   const form = useForm<WorkoutSession>({
     initialValues: { title: '', createdBy: '', createdAt: '' },
@@ -151,10 +179,21 @@ export function NewProgram() {
                 ))}
               </SimpleGrid>
             </Stepper.Step>
-            <Stepper.Step
-              label="Third step"
-              description="Choose tags"
-            ></Stepper.Step>
+            <Stepper.Step label="Third step" description="Choose tags">
+              <MultiSelect
+                label="Creatable MultiSelect"
+                data={data}
+                placeholder="Select items"
+                searchable
+                creatable
+                getCreateLabel={query => `+ Create ${query}`}
+                onCreate={query => {
+                  const item = { value: query, label: query }
+                  setData(current => [...current, item])
+                  return item
+                }}
+              />
+            </Stepper.Step>
 
             <Stepper.Completed>
               Ferdig, klikk for å legge til økten!
