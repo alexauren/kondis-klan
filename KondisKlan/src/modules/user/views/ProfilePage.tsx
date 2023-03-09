@@ -14,6 +14,7 @@ import {
   Space,
   List,
   ThemeIcon,
+  SimpleGrid,
 } from '@mantine/core'
 import { IconAt, IconBuilding, IconPhoneCall } from '@tabler/icons-react'
 import { FullContentLoader } from 'components/FullContentLoader'
@@ -23,7 +24,8 @@ import { collection, doc } from 'firebase/firestore'
 import { WorkoutSessionFeed } from 'modules/workoutsession/components/WorkoutSessionFeed'
 import { useDocument, useDocumentData } from 'react-firebase-hooks/firestore'
 import { useParams } from 'react-router-dom'
-import { MyWorkouts } from '../Components/MyWorkouts'
+import { MyCompletedWorkouts } from '../components/MyCompletedWorkouts'
+import { MyWorkouts } from '../components/MyWorkouts'
 
 const useStyles = createStyles(theme => ({
   detailsWrapper: {
@@ -108,16 +110,16 @@ function UserDetail() {
           )}
         </Paper>
       </div>
-      <Group noWrap>
-        <Container>
-          <Title> Completed Workouts</Title>
+      <SimpleGrid cols={2}>
+        <Stack>
+          <Title> My Workouts </Title>
           <MyWorkouts userId={userId} />
-        </Container>
-        <Container>
-          <Title> My Workouts</Title>
-          <WorkoutSessionFeed />
-        </Container>
-      </Group>
+        </Stack>
+        <Stack>
+          <Title> Completed Workouts</Title>
+          <MyCompletedWorkouts userId={userId} />
+        </Stack>
+      </SimpleGrid>
     </Stack>
   )
 }

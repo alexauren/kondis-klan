@@ -1,25 +1,11 @@
-import {
-  Text,
-  Container,
-  Title,
-  SimpleGrid,
-  Card,
-  Skeleton,
-  Button,
-} from '@mantine/core'
-import { Exercise } from 'modules/exercise/types'
-import { ExerciseCard } from 'modules/exercise/components/ExerciseCard'
-import {
-  WorkoutSession,
-  WorkoutSessionDocument,
-  WorkoutSessionWithTimestamp,
-} from 'modules/workoutsession/types'
-import { useExerciseCollection } from 'firebase/queries/exerciseQueries'
-import { FullContentLoader } from 'components/FullContentLoader'
+import { Button, Card, SimpleGrid, Text, Title } from '@mantine/core'
 import { EmptyLoader } from 'components/EmptyLoader'
 import { format } from 'date-fns'
+import { useExerciseCollection } from 'firebase/queries/exerciseQueries'
 import { SendWorkoutToCompleted } from 'firebase/queries/workoutSessionQueries'
-import { Timestamp } from 'firebase/firestore'
+import { ExerciseCard } from 'modules/exercise/components/ExerciseCard'
+import { Exercise } from 'modules/exercise/types'
+import { WorkoutSessionWithTimestamp } from 'modules/workoutsession/types'
 
 //interface
 interface WorkoutCard {
@@ -27,7 +13,7 @@ interface WorkoutCard {
 }
 
 //component
-export function WorkoutCard({ workoutsession }: WorkoutCard) {
+export function WorkoutCardCompleted({ workoutsession }: WorkoutCard) {
   const { data, error, loading } = useExerciseCollection(workoutsession.id)
 
   if (loading) {

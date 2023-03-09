@@ -17,9 +17,12 @@ import {
 import { db } from 'containers/Root'
 import {
   WorkoutSession,
+  WorkoutsessionComplete,
   workoutSessionConverter,
   WorkoutSessionDocument,
+  WorkoutSessionWithTimestamp,
 } from 'modules/workoutsession/types'
+import { IconSquareRoundedChevronsRightFilled } from '@tabler/icons-react'
 
 export function useWorkoutSessionCollection() {
   //use useCollectionData to get the data from the collection
@@ -75,4 +78,46 @@ export function useMyWorkouts(userId: string) {
   )
   const [data, loading, error] = useCollectionData<DocumentData>(querydata)
   return { data, loading, error }
+}
+
+export function useMyCompletedWorkouts(userId: string) {
+  const collectionRef = collection(db, 'completedworkouts').withConverter(
+    workoutSessionConverter
+  )
+  const querydata = query(
+    collectionRef,
+    orderBy('completedAt', 'desc'),
+    where('completedBy', '==', userId)
+  )
+  const [data, loading, error] = useCollectionData<DocumentData>(querydata)
+  return { data, loading, error }
+}
+
+interface SendWorkoutToCompletedProps {
+  workout: WorkoutSessionWithTimestamp
+  completedBy: string
+  completedAt: string | Date
+}
+
+export async function SendWorkoutToCompleted({
+  workout,
+  completedAt,
+  completedBy,
+}: SendWorkoutToCompletedProps) {
+  // this is the reference to completed workouts
+  const collectionRef = collection(db, 'completedworkouts')
+
+  // this is where we create the object to be sent
+  const completedWorkout = {
+    title: workout.title,
+    createdAt: workout.createdAt,
+    createdBy: workout.createdBy,
+    completedAt: completedAt,
+    completedBy: completedBy,
+  }
+
+  // now we add the document to firebase using AddDoc
+
+  //use addDoc to add a document to the collection
+  return await addDoc(collectionRef, completedWorkout)
 }
