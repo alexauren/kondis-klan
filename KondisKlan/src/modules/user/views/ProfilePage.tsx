@@ -15,17 +15,115 @@ import {
   List,
   ThemeIcon,
   SimpleGrid,
+  Checkbox,
+  MultiSelect,
 } from '@mantine/core'
 import { IconAt, IconBuilding, IconPhoneCall } from '@tabler/icons-react'
 import { FullContentLoader } from 'components/FullContentLoader'
 import FullPageError from 'components/FullPageError'
 import { db } from 'containers/Root'
 import { collection, doc } from 'firebase/firestore'
+import {
+  setUserInterests,
+  updateTagsCollection,
+  updateUserVisibility,
+} from 'firebase/queries/userQueries'
 import { WorkoutSessionFeed } from 'modules/workoutsession/components/WorkoutSessionFeed'
+import { useState } from 'react'
 import { useDocument, useDocumentData } from 'react-firebase-hooks/firestore'
 import { useParams } from 'react-router-dom'
 import { MyCompletedWorkouts } from '../components/MyCompletedWorkouts'
 import { MyWorkouts } from '../components/MyWorkouts'
+
+function UserDetail() {
+  const { classes } = useStyles()
+  const { userId } = useParams() as { userId: string }
+  const userRef = doc(db, 'users', userId)
+  const [value, loading, error] = useDocumentData(userRef)
+  const [tagsFromDB, loadingTags, errorTags] = useDocumentData(
+    doc(db, 'tags', 'ZP3S5zqtbEnjYZRvKMxB')
+  )
+  const tagList = tagsFromDB?.tags
+  //True needs to be changed to reflect the actual settings
+  const [isChecked, setIsChecked] = useState(true)
+
+  if (loading || loadingTags) {
+    return <FullContentLoader />
+  }
+  if (error || errorTags) {
+    return <FullPageError />
+  }
+
+  const user = value
+
+  return (
+    <Stack justify="flex-start">
+      <Container mt={'lg'} size={700}>
+        <Title order={2} className={classes.title} mb="md">
+          Profil
+        </Title>
+        <Paper shadow={'sm'} p={'lg'} className={classes.paper}>
+          {user && (
+            <div className={classes.detailsCard}>
+              <Group position="apart">
+                <div>
+                  <Space h={'xs'} />
+                  <Text className={classes.name}>{user.name}</Text>
+                  <Divider my={'sm'} />
+                  <Group noWrap spacing={10} mt={3}>
+                    <IconAt />
+                    <Text size="sm" color="dimmed">
+                      {user.email}
+                    </Text>
+                  </Group>
+                </div>
+              </Group>
+              <Checkbox
+                checked={user.public}
+                onClick={() => {
+                  setIsChecked(!isChecked)
+                }}
+                onChange={() => {
+                  updateUserVisibility(userId, isChecked)
+                }}
+                label="Jeg vil at profilen min skal være offentlig"
+              />
+              <MultiSelect
+                label="Mine interesser"
+                data={tagList} //replace with all tags
+                placeholder="Velg interesser"
+                nothingFound="Ingen funnet"
+                searchable
+                multiple
+                creatable
+                getCreateLabel={tags => `+ Legg til ${tags}`}
+                onChange={tags => {
+                  // set of strings
+                  setUserInterests(userId, tags)
+                  updateTagsCollection(tags)
+                  console.log(tags)
+                  return tags
+                }}
+              />
+            </div>
+          )}
+        </Paper>
+      </Container>
+      <SimpleGrid cols={2}>
+        <Stack>
+          <Title> My Workouts </Title>
+          <MyWorkouts userId={userId} />
+        </Stack>
+        <Stack>
+          <Title> Completed Workouts</Title>
+          <MyCompletedWorkouts userId={userId} />
+        </Stack>
+      </SimpleGrid>
+    </Stack>
+  )
+}
+
+export default UserDetail
 
 const useStyles = createStyles(theme => ({
   detailsWrapper: {
@@ -69,59 +167,3 @@ const useStyles = createStyles(theme => ({
     color: theme.colors.gray[6],
   },
 }))
-
-function UserDetail() {
-  const { classes } = useStyles()
-  const { userId } = useParams() as { userId: string }
-  const userRef = doc(db, 'users', userId)
-  const [value, loading, error] = useDocumentData(userRef)
-  if (loading) {
-    return <FullContentLoader />
-  }
-  if (error) {
-    return <FullPageError />
-  }
-
-  const user = value
-
-  return (
-    <Stack justify="flex-start">
-      <div>
-        <Title order={2} className={classes.title} mb="md">
-          Profil
-        </Title>
-        <Paper shadow={'sm'} p={'lg'} className={classes.paper}>
-          {user && (
-            <div className={classes.detailsCard}>
-              <Group position="apart">
-                <div>
-                  <Space h={'xs'} />
-                  <Text className={classes.name}>{user.name}</Text>
-                  <Divider my={'sm'} />
-                  <Group noWrap spacing={10} mt={3}>
-                    <IconAt />
-                    <Text size="sm" color="dimmed">
-                      {user.email}
-                    </Text>
-                  </Group>
-                </div>
-              </Group>
-            </div>
-          )}
-        </Paper>
-      </div>
-      <SimpleGrid cols={2}>
-        <Stack>
-          <Title> My Workouts </Title>
-          <MyWorkouts userId={userId} />
-        </Stack>
-        <Stack>
-          <Title> Completed Workouts</Title>
-          <MyCompletedWorkouts userId={userId} />
-        </Stack>
-      </SimpleGrid>
-    </Stack>
-  )
-}
-
-export default UserDetail
