@@ -32,7 +32,6 @@ export async function updateUserVisibility(
   await updateDoc(user, {
     public: visibility,
   })
-  console.log('Finito?')
 }
 
 export async function addUserInterests(userId: string, interestList: string[]) {
