@@ -20,12 +20,23 @@ function Root() {
 
   const mantineTheme: MantineThemeOverride = {
     colors: {
-      kondisGreen: ['#c9efc7'],
+      kondisGreen: [
+        '#e4f7e3',
+        '#d9f4d8',
+        '#c9efc7',
+        '#b5d7b3',
+        '#a1bf9f',
+        '#8da78b',
+        '#798f77',
+        '#657864',
+        '#506050',
+        '#3c483c',
+      ],
       kondisGreenDark: ['#a1d6a3'],
       kondisGreenLight: ['#e5f7e5'],
     },
     primaryShade: 6,
-    primaryColor: 'teal',
+    primaryColor: 'kondisGreen',
   }
 
   return (
