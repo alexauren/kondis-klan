@@ -34,6 +34,7 @@ import { useDocument, useDocumentData } from 'react-firebase-hooks/firestore'
 import { useParams } from 'react-router-dom'
 import { MyCompletedWorkouts } from '../components/MyCompletedWorkouts'
 import { MyWorkouts } from '../components/MyWorkouts'
+import TagView from './Tags'
 
 function UserDetail() {
   const { classes } = useStyles()
@@ -58,6 +59,7 @@ function UserDetail() {
 
   return (
     <Stack justify="flex-start">
+      <TagView />
       <Container mt={'lg'} size={700}>
         <Title order={2} className={classes.title} mb="md">
           Profil
@@ -87,23 +89,6 @@ function UserDetail() {
                   updateUserVisibility(userId, isChecked)
                 }}
                 label="Jeg vil at profilen min skal være offentlig"
-              />
-              <MultiSelect
-                label="Mine interesser"
-                data={tagList} //replace with all tags
-                placeholder="Velg interesser"
-                nothingFound="Ingen funnet"
-                searchable
-                multiple
-                creatable
-                getCreateLabel={tags => `+ Legg til ${tags}`}
-                onChange={tags => {
-                  // set of strings
-                  setUserInterests(userId, tags)
-                  updateTagsCollection(tags)
-                  console.log(tags)
-                  return tags
-                }}
               />
             </div>
           )}
