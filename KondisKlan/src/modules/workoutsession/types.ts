@@ -12,6 +12,7 @@ export type WorkoutSession = {
   title: string
   createdAt: string | Date
   createdBy: string
+  tags?: Array<string>
 }
 
 export type WorkoutSessionDocument = WorkoutSession & {
@@ -46,6 +47,7 @@ export const workoutSessionConverter: FirestoreDataConverter<WorkoutSessionDocum
         title: data.title,
         createdAt: data.createdAt,
         createdBy: data.createdBy,
+        tags: data.tags,
       }
     },
   }

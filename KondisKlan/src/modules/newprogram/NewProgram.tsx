@@ -61,7 +61,7 @@ export function NewProgram() {
   const tagList = tagsFromDB?.tags
 
   const form = useForm<WorkoutSession>({
-    initialValues: { title: '', createdBy: '', createdAt: '' },
+    initialValues: { title: '', createdBy: '', createdAt: '', tags: [] },
     validate: {
       title: value =>
         value.length < 2 ? 'Name must have at least 2 letters' : null,
@@ -73,6 +73,7 @@ export function NewProgram() {
     {
       date ? (values.createdAt = date) : null
     }
+
     setIsSubmitting(true)
 
     addWorkoutSession(values)
@@ -185,12 +186,14 @@ export function NewProgram() {
                 data={tagList} //replace with all tags
                 placeholder="Velg tags"
                 nothingFound="Ingen funnet"
+                value={form.values.tags}
                 searchable
                 multiple
                 creatable
                 getCreateLabel={tags => `+ Legg til ${tags}`}
                 onChange={tags => {
                   updateTagsCollection(tags)
+                  form.setFieldValue('tags', tags)
                   console.log(tags)
                   return tags
                 }}
