@@ -40,6 +40,11 @@ import {
   useCollectionData,
   useDocumentData,
 } from 'react-firebase-hooks/firestore'
+import {
+  setUserInterests,
+  updateUserVisibility,
+  updateTagsCollection,
+} from 'firebase/queries/userQueries'
 
 export function NewProgram() {
   const theme = useMantineTheme()
@@ -50,15 +55,10 @@ export function NewProgram() {
   const [exerciseList, setExerciseList] = useState<Exercise[]>([])
   const [date, setDate] = useState<Date | null>(null)
 
-  const [data, setData] = useState([{}])
-
-  function getTags() {
-    const collectionRef = collection(db, 'workoutsessions')
-    const [data, loading, error] =
-      useCollectionData<DocumentData>(collectionRef)
-    console.log({ data, loading, error })
-    return { data, loading, error }
-  }
+  const [tagsFromDB, loadingTags, errorTags] = useDocumentData(
+    doc(db, 'tags', 'ZP3S5zqtbEnjYZRvKMxB')
+  )
+  const tagList = tagsFromDB?.tags
 
   const form = useForm<WorkoutSession>({
     initialValues: { title: '', createdBy: '', createdAt: '' },
@@ -181,16 +181,18 @@ export function NewProgram() {
             </Stepper.Step>
             <Stepper.Step label="Third step" description="Choose tags">
               <MultiSelect
-                label="Creatable MultiSelect"
-                data={data}
-                placeholder="Select items"
+                label="Mine tags"
+                data={tagList} //replace with all tags
+                placeholder="Velg tags"
+                nothingFound="Ingen funnet"
                 searchable
+                multiple
                 creatable
-                getCreateLabel={query => `+ Create ${query}`}
-                onCreate={query => {
-                  const item = { value: query, label: query }
-                  setData(current => [...current, item])
-                  return item
+                getCreateLabel={tags => `+ Legg til ${tags}`}
+                onChange={tags => {
+                  updateTagsCollection(tags)
+                  console.log(tags)
+                  return tags
                 }}
               />
             </Stepper.Step>
