@@ -36,7 +36,7 @@ export default function TagView() {
   }
 
   return (
-    <Container style={{ width: '1200' }}>
+    <Container style={{ width: '1200px' }}>
       <Title ta="left">Tags</Title>
       <Group position="center" mt="md" spacing="md">
         {interests?.map((tag: string) => (

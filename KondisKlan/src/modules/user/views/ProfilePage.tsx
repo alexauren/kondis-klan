@@ -18,6 +18,7 @@ import {
   Checkbox,
   MultiSelect,
 } from '@mantine/core'
+import { showNotification } from '@mantine/notifications'
 import { IconAt, IconBuilding, IconPhoneCall } from '@tabler/icons-react'
 import { FullContentLoader } from 'components/FullContentLoader'
 import FullPageError from 'components/FullPageError'
@@ -45,8 +46,9 @@ function UserDetail() {
     doc(db, 'tags', 'ZP3S5zqtbEnjYZRvKMxB')
   )
   const tagList = tagsFromDB?.tags
-  //True needs to be changed to reflect the actual settings
-  const [isChecked, setIsChecked] = useState(true)
+  const user = value
+
+  const [isChecked, setIsChecked] = useState(false)
 
   if (loading || loadingTags) {
     return <FullContentLoader />
@@ -54,8 +56,6 @@ function UserDetail() {
   if (error || errorTags) {
     return <FullPageError />
   }
-
-  const user = value
 
   return (
     <Stack justify="flex-start">
@@ -81,12 +81,16 @@ function UserDetail() {
                 </div>
               </Group>
               <Checkbox
-                checked={user.public}
-                onClick={() => {
-                  setIsChecked(!isChecked)
-                }}
+                checked={user ? user.public : false}
                 onChange={() => {
-                  updateUserVisibility(userId, isChecked)
+                  updateUserVisibility(userId, !isChecked).then(() => {
+                    showNotification({
+                      title: 'Oppdatert',
+                      message: 'Din synlighet er nå endret',
+                      color: 'teal',
+                    })
+                    setIsChecked(!isChecked)
+                  })
                 }}
                 label="Jeg vil at profilen min skal være offentlig"
               />
