@@ -25,6 +25,16 @@ export function useExerciseCollection(documentRef: string) {
   return { data, loading, error }
 }
 
+export function useCompletedExerciseCollection(documentRef: string) {
+  console.log('HELLO')
+  //use useCollectionData to get the data from the collection
+  const [data, loading, error] = useCollectionData(
+    collection(db, `completedworkouts/${documentRef}/exercises`)
+  )
+
+  return { data, loading, error }
+}
+
 export function useExerciseDocument(
   workoutSessionRef: string,
   exerciseRef: string
@@ -43,6 +53,17 @@ export async function addExerciseDocument(
   //use addDoc to add a document to the collection
   return await addDoc(
     collection(db, `workoutsessions/${workoutSessionRef}/exercises`),
+    data
+  )
+}
+
+export async function addCompletedExerciseDocument(
+  workoutSessionRef: string,
+  data: Exercise
+) {
+  //use addDoc to add a document to the collection
+  return await addDoc(
+    collection(db, `completedworkouts/${workoutSessionRef}/exercises`),
     data
   )
 }
