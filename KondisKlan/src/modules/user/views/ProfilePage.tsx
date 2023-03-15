@@ -1,36 +1,29 @@
 import {
-  Card,
-  createStyles,
-  Group,
-  Paper,
-  Text,
-  Image,
-  Stack,
-  Title,
-  Badge,
-  Divider,
-  Avatar,
-  Container,
-  Space,
-  List,
-  ThemeIcon,
-  SimpleGrid,
   Checkbox,
+  Container,
+  createStyles,
+  Divider,
+  Group,
   MultiSelect,
+  Paper,
+  SimpleGrid,
+  Space,
+  Stack,
+  Text,
+  Title,
 } from '@mantine/core'
-import { IconAt, IconBuilding, IconPhoneCall } from '@tabler/icons-react'
+import { IconAt } from '@tabler/icons-react'
 import { FullContentLoader } from 'components/FullContentLoader'
 import FullPageError from 'components/FullPageError'
 import { db } from 'containers/Root'
-import { collection, doc } from 'firebase/firestore'
+import { doc } from 'firebase/firestore'
 import {
   setUserInterests,
   updateTagsCollection,
   updateUserVisibility,
 } from 'firebase/queries/userQueries'
-import { WorkoutSessionFeed } from 'modules/workoutsession/components/WorkoutSessionFeed'
 import { useState } from 'react'
-import { useDocument, useDocumentData } from 'react-firebase-hooks/firestore'
+import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { useParams } from 'react-router-dom'
 import { MyCompletedWorkouts } from '../components/MyCompletedWorkouts'
 import { MyWorkouts } from '../components/MyWorkouts'
@@ -39,7 +32,7 @@ function UserDetail() {
   const { classes } = useStyles()
   const { userId } = useParams() as { userId: string }
   const userRef = doc(db, 'users', userId)
-  const [value, loading, error] = useDocumentData(userRef)
+  const [data, loading, error] = useDocumentData(userRef)
   const [tagsFromDB, loadingTags, errorTags] = useDocumentData(
     doc(db, 'tags', 'ZP3S5zqtbEnjYZRvKMxB')
   )
@@ -54,7 +47,7 @@ function UserDetail() {
     return <FullPageError />
   }
 
-  const user = value
+  const user = data
 
   return (
     <Stack justify="flex-start">
