@@ -25,7 +25,7 @@ export type WorkoutSessionWithTimestamp = Omit<
   createdAt: Timestamp
 }
 
-export type WorkoutsessionComplete = WorkoutSessionWithTimestamp & {
+export type WorkoutSessionComplete = WorkoutSessionWithTimestamp & {
   completedAt: Timestamp
   completedBy: string
 }
@@ -51,6 +51,35 @@ export const workoutSessionConverter: FirestoreDataConverter<WorkoutSessionDocum
         title: data.title,
         createdAt: data.createdAt,
         createdBy: data.createdBy,
+      }
+    },
+  }
+
+export const workoutSessionCompletedConverter: FirestoreDataConverter<WorkoutSessionComplete> =
+  {
+    toFirestore: (
+      workoutSession: WithFieldValue<WorkoutSessionComplete>
+    ): DocumentData => {
+      return {
+        title: workoutSession.title,
+        createdAt: workoutSession.createdAt,
+        createdBy: workoutSession.createdBy,
+        completedAt: workoutSession.completedAt,
+        completedBy: workoutSession.completedBy,
+      }
+    },
+    fromFirestore(
+      snapshot: QueryDocumentSnapshot,
+      options: SnapshotOptions
+    ): WorkoutSessionComplete {
+      const data = snapshot.data(options)
+      return {
+        id: snapshot.id,
+        title: data.title,
+        createdAt: data.createdAt,
+        createdBy: data.createdBy,
+        completedAt: data.completedAt,
+        completedBy: data.completedBy,
       }
     },
   }
