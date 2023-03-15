@@ -24,7 +24,7 @@ function Root() {
         '#e4f7e3',
         '#d9f4d8',
         '#c9efc7',
-        '#b5d7b3',
+        '#c0ddb9',
         '#a1bf9f',
         '#8da78b',
         '#798f77',

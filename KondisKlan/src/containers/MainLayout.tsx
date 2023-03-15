@@ -29,7 +29,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
     <AppShell
       styles={{
         main: {
-          background: theme.colors['kondisGreen'][2],
+          background: theme.colors['kondisGreen'][4],
         },
       }}
       navbar={<NavBar isHidden={isMobile ? sidebarOpen : false} />}
