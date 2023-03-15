@@ -73,11 +73,13 @@ export function ExerciseForm({
         <Group position="right">
           <Button
             onClick={() => handleAddExercise(form.values)}
-            variant="outline"
+            variant="filled"
           >
             Add exercise
           </Button>
-          <Button onClick={handleClick}>Done</Button>
+          <Button variant="outline" onClick={handleClick}>
+            Done
+          </Button>
         </Group>
       </Stack>
       <SimpleGrid cols={1}>{exerciseCards}</SimpleGrid>
