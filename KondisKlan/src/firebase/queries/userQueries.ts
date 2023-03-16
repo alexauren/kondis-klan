@@ -62,7 +62,6 @@ export async function updateTagsCollection(tag: string | null) {
 
   tagsList.push(tag)
   const tagsArray = Array.from(new Set(tagsList))
-  console.log(tagsArray)
 
   await updateDoc(tagsRef, {
     tags: tagsArray,
