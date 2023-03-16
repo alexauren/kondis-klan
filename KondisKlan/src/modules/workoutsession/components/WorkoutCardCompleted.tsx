@@ -1,14 +1,6 @@
-import {
-  Badge,
-  Button,
-  Card,
-  createStyles,
-  Group,
-  SimpleGrid,
-  Text,
-  Title,
-} from '@mantine/core'
+import { Button, Card, SimpleGrid, Text, Title } from '@mantine/core'
 import { EmptyLoader } from 'components/EmptyLoader'
+import { format } from 'date-fns'
 import { useExerciseCollection } from 'firebase/queries/exerciseQueries'
 import { SendWorkoutToCompleted } from 'firebase/queries/workoutSessionQueries'
 import { ExerciseCard } from 'modules/exercise/components/ExerciseCard'
@@ -21,10 +13,8 @@ interface WorkoutCard {
 }
 
 //component
-export function WorkoutCard({ workoutsession }: WorkoutCard) {
+export function WorkoutCardCompleted({ workoutsession }: WorkoutCard) {
   const { data, error, loading } = useExerciseCollection(workoutsession.id)
-  //const { data: userData, userLoading, userError } = useUser(workoutsession.createdBy)
-  const { classes } = useStyles()
 
   if (loading) {
     return <EmptyLoader />
@@ -50,56 +40,33 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
 
   const exercises2 = data as Exercise[]
 
-  // const createdAtToString = format(
-  //   workoutsession.createdAt.toDate(),
-  //   'dd.MM.yyyy'
-  // )
+  const createdAtToString = format(
+    workoutsession.createdAt.toDate(),
+    'dd.MM.yyyy'
+  )
 
   console.log(workoutsession)
 
   return (
-    <Card shadow={'sm'} className={classes.card}>
-      <Title color={'kondisGreen.0'} transform="uppercase" order={3}>
-        {workoutsession.title}
-      </Title>
-      <div>
-        workoutsession.tags.forEach(tag){' '}
-        {
-          <Badge color="pink" variant="filled">
-            {workoutsession.tags}
-          </Badge>
-        }
-      </div>
+    <Card withBorder shadow={'sm'}>
+      <Title order={3}>{workoutsession.title}</Title>
 
       <Text>
         <Text>Lagd av: {workoutsession.createdBy}</Text>
-        <Text color={'kondisGreen.7'}>Opprettet: {'createdAtToString'}</Text>
+        <Text>Den {createdAtToString}</Text>
       </Text>
       <SimpleGrid
         cols={3}
         spacing="xl"
-        my="md"
+        mt={50}
         breakpoints={[{ maxWidth: 'md', cols: 1 }]}
       >
         {exercises2.map(exercise => (
           <ExerciseCard key={exercise.name} exercise={exercise} />
         ))}
       </SimpleGrid>
-      <Group position="right">
-        <Button variant={'light'} onClick={handleComplete}>
-          Gjennomfør
-        </Button>
-      </Group>
+      <Button onClick={handleComplete}>Gjennomfør</Button>
     </Card>
     // </Container>
   )
 }
-
-const useStyles = createStyles((theme, _params, getRef) => ({
-  card: {
-    backgroundColor: theme.colors[theme.primaryColor][4],
-    border: '1px solid ',
-    borderColor: theme.colors[theme.primaryColor][5],
-    color: theme.white,
-  },
-}))

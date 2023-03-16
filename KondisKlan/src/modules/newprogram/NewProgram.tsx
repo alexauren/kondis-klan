@@ -65,7 +65,6 @@ export function NewProgram() {
     validate: {
       title: value =>
         value.length < 2 ? 'Name must have at least 2 letters' : null,
-      createdBy: value => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
     },
   })
 

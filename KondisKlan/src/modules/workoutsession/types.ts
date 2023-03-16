@@ -26,6 +26,11 @@ export type WorkoutSessionWithTimestamp = Omit<
   createdAt: Timestamp
 }
 
+export type WorkoutsessionComplete = WorkoutSessionWithTimestamp & {
+  completedAt: Timestamp
+  completedBy: string
+}
+
 export const workoutSessionConverter: FirestoreDataConverter<WorkoutSessionDocument> =
   {
     toFirestore: (
