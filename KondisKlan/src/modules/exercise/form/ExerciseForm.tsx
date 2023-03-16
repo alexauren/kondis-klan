@@ -6,13 +6,19 @@ import {
   SimpleGrid,
   Stack,
   TextInput,
+  Select,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
+import { FullContentLoader } from 'components/FullContentLoader'
+import FullPageError from 'components/FullPageError'
 import { db } from 'containers/Root'
+import { doc } from 'firebase/firestore'
 import { ExerciseCard } from 'modules/exercise/components/ExerciseCard'
 import { determineExerciseType } from 'modules/exercise/util'
 import { useState } from 'react'
+import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { Exercise } from '../types'
+import { addExercise } from 'firebase/queries/exerciseQueries'
 
 interface ExerciseFormProps {
   setExerciseListCallback: (exerciseList: Exercise[]) => void
@@ -47,6 +53,17 @@ export function ExerciseForm({
     setOpened(false)
   }
 
+  const [exercisesFromDB, loading, error] = useDocumentData(
+    doc(db, 'exercises', 'kbbjPMMnikSyEdFrZaTf')
+  )
+  const exerciseData = exercisesFromDB?.exercises
+  if (loading) {
+    return <FullContentLoader />
+  }
+  if (error) {
+    return <FullPageError />
+  }
+
   function handleAddExercise(values: Exercise) {
     const exercise = determineExerciseType(values)
     console.log(exercise)
@@ -62,7 +79,21 @@ export function ExerciseForm({
   return (
     <Group>
       <Stack justify={'flex-start'}>
-        <TextInput placeholder="Name" {...form.getInputProps('name')} />
+        <Select
+          //Legg til label ved behov.
+          data={exerciseData}
+          placeholder="Skriv inn navnet på øvelsen."
+          nothingFound="Finner ikke øvelsen."
+          searchable
+          creatable
+          getCreateLabel={exercise => `+ Legg til ${exercise}`}
+          onChange={exercise => {
+            exercise = exercise as string
+            console.log(exercise)
+            form.setFieldValue('name', exercise)
+            addExercise(exercise)
+          }}
+        />
         <NumberInput placeholder="Reps" {...form.getInputProps('reps')} />
         <NumberInput placeholder="Sets" {...form.getInputProps('sets')} />
         <NumberInput placeholder="Weight" {...form.getInputProps('weight')} />
