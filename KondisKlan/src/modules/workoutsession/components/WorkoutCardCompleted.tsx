@@ -2,6 +2,7 @@ import {
   Button,
   Card,
   createStyles,
+  Divider,
   Group,
   SimpleGrid,
   Stack,
@@ -10,15 +11,18 @@ import {
 } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { EmptyLoader } from 'components/EmptyLoader'
+import FullPageError from 'components/FullPageError'
 import { format } from 'date-fns'
 import {
   addCompletedExerciseDocument,
   useCompletedExerciseCollection,
   useExerciseCollection,
 } from 'firebase/queries/exerciseQueries'
+import { useUserDocument } from 'firebase/queries/userQueries'
 import { SendWorkoutToCompleted } from 'firebase/queries/workoutSessionQueries'
 import { ExerciseCard } from 'modules/exercise/components/ExerciseCard'
 import { Exercise } from 'modules/exercise/types'
+import { UserType } from 'modules/user/types'
 import { WorkoutSessionComplete } from 'modules/workoutsession/types'
 
 //interface
@@ -28,17 +32,26 @@ interface WorkoutCard {
 
 //component
 export function WorkoutCardCompleted({ workoutsession }: WorkoutCard) {
+  const {
+    data: userData,
+    error: userError,
+    loading: userLoading,
+  } = useUserDocument(workoutsession.completedBy)
+  const {
+    data: user2Data,
+    error: user2Error,
+    loading: user2Loading,
+  } = useUserDocument(workoutsession.createdBy)
   const { data, error, loading } = useCompletedExerciseCollection(
     workoutsession.id
   )
   const { classes } = useStyles()
 
-  if (loading) {
-    return <EmptyLoader />
-  }
+  if (error || userError || !data || !userData || !user2Data || user2Error)
+    return <FullPageError />
 
-  if (error) {
-    return <span>Error</span>
+  if (loading || userLoading || user2Loading) {
+    return <EmptyLoader />
   }
 
   if (!data) {
@@ -46,9 +59,16 @@ export function WorkoutCardCompleted({ workoutsession }: WorkoutCard) {
   }
 
   const exerciseList = data as Exercise[]
+  const userCompleted = userData as UserType
+  const userCreator = user2Data as UserType
 
   const createdAtToString = format(
     workoutsession.createdAt.toDate(),
+    'dd.MM.yyyy'
+  )
+
+  const completedAtToString = format(
+    workoutsession.completedAt.toDate(),
     'dd.MM.yyyy'
   )
 
@@ -84,10 +104,35 @@ export function WorkoutCardCompleted({ workoutsession }: WorkoutCard) {
         </Title>
 
         <Text align="center">
-          <Text size={'md'} color={'kondisGreen.2'}>
-            Lagd av: {workoutsession.createdBy}
-          </Text>
-          <Text color={'kondisGreen.0'}>Opprettet: {createdAtToString}</Text>
+          <Group>
+            <div>
+              <Text
+                align="left"
+                weight={'bold'}
+                size={'md'}
+                color={'kondisGreen.2'}
+              >
+                Gjennomført av: {userCompleted.name}
+              </Text>
+              <Text size={'md'} color={'kondisGreen.2'}>
+                Gjennomført: {completedAtToString}
+              </Text>
+            </div>
+            <Divider orientation="vertical" />
+            <div>
+              <Text
+                align="left"
+                weight={'bold'}
+                size={'md'}
+                color={'kondisGreen.7'}
+              >
+                Lagd av: {userCreator.name}
+              </Text>
+              <Text color={'kondisGreen.7'}>
+                Opprettet: {createdAtToString}
+              </Text>
+            </div>
+          </Group>
         </Text>
       </Stack>
       <SimpleGrid

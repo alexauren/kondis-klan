@@ -29,6 +29,9 @@ import { SendWorkoutToCompleted } from 'firebase/queries/workoutSessionQueries'
 import { Timestamp } from 'firebase/firestore'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { showNotification } from '@mantine/notifications'
+import { useUserDocument } from 'firebase/queries/userQueries'
+import FullPageError from 'components/FullPageError'
+import { UserType } from 'modules/user/types'
 
 //interface
 interface WorkoutCard {
@@ -38,22 +41,22 @@ interface WorkoutCard {
 //component
 export function WorkoutCard({ workoutsession }: WorkoutCard) {
   const { data, error, loading } = useExerciseCollection(workoutsession.id)
+  const {
+    data: userData,
+    error: userError,
+    loading: userLoading,
+  } = useUserDocument(workoutsession.createdBy)
   //const { data: userData, userLoading, userError } = useUser(workoutsession.createdBy)
   const { classes } = useStyles()
 
-  if (loading) {
+  if (error || userError || !data || !userData) return <FullPageError />
+
+  if (loading || userLoading) {
     return <EmptyLoader />
   }
 
-  if (error) {
-    return <span>Error</span>
-  }
-
-  if (!data) {
-    return <div>Not found</div>
-  }
-
   const exerciseList = data as Exercise[]
+  const user = userData as UserType
 
   const createdAtToString = format(
     workoutsession.createdAt.toDate(),
@@ -82,7 +85,8 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
       })
   }
 
-  console.log(workoutsession)
+  //console.log(workoutsession)
+  console.log('denne skal returne user: ', user)
 
   return (
     <Card radius={'lg'} shadow={'sm'} className={classes.card}>
@@ -93,7 +97,7 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
 
         <Text align="center">
           <Text size={'md'} color={'kondisGreen.6'}>
-            Lagd av: {workoutsession.createdBy}
+            Lagd av: {user.name}
           </Text>
           <Text color={'kondisGreen.8'}>Opprettet: {createdAtToString}</Text>
         </Text>

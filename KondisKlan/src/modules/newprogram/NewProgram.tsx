@@ -22,15 +22,27 @@ import { WorkoutSession } from 'modules/workoutsession/types'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { showNotification } from '@mantine/notifications'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { getAuth } from 'firebase/auth'
+import FullPageError from 'components/FullPageError'
+import { FullContentLoader } from 'components/FullContentLoader'
 
 export function NewProgram() {
   const theme = useMantineTheme()
   const navigate = useNavigate()
+  const auth = getAuth()
   const [active, setActive] = useState(0)
   const [opened, setOpened] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [exerciseList, setExerciseList] = useState<Exercise[]>([])
   const [date, setDate] = useState<Date | null>(null)
+  const [user, loading, error] = useAuthState(auth)
+
+  if (error) return <FullPageError />
+
+  if (loading || !user) return <FullContentLoader />
+
+  const uid = user.uid
 
   const form = useForm<WorkoutSession>({
     initialValues: { title: '', createdBy: '', createdAt: '' },
@@ -45,6 +57,7 @@ export function NewProgram() {
       date ? (values.createdAt = date) : null
     }
     setIsSubmitting(true)
+    values.createdBy = uid
 
     addWorkoutSession(values)
       .then(function (docRef) {
@@ -64,7 +77,7 @@ export function NewProgram() {
   }
 
   function handleNextStep() {
-    console.log('active: ' + active)
+    //console.log('active: ' + active)
     if (active === 2) {
       handleSubmit(form.values)
     }
@@ -77,7 +90,7 @@ export function NewProgram() {
 
     if (active === 0) {
       //validate that title and createdBy is filled out
-      if (form.values.title && form.values.createdBy) {
+      if (form.values.title) {
         setActive(active + 1)
       }
     }
@@ -105,12 +118,6 @@ export function NewProgram() {
                 label="Tittel"
                 placeholder="Push, Pull, Legs"
                 {...form.getInputProps('title')}
-              />
-              <TextInput
-                mt="sm"
-                label="Laget av (skal fjernes)"
-                placeholder="john@smith.com"
-                {...form.getInputProps('createdBy')}
               />
               <DatePicker
                 label="Created date"
