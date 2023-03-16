@@ -63,9 +63,9 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
         {workoutsession.title}
       </Title>
       <div>
-        {workoutsession.tags.map((tag, index) => (
+        {workoutsession.tags?.map((tag, index) => (
           <Badge color="pink" variant="filled">
-            {workoutsession.tags[index]}
+            {workoutsession.tags?.[index]}
           </Badge>
         ))}
       </div>
