@@ -14,44 +14,52 @@ import {
   Space,
   List,
   ThemeIcon,
+  SimpleGrid,
   Checkbox,
   MultiSelect,
 } from '@mantine/core'
+import { showNotification } from '@mantine/notifications'
 import { IconAt, IconBuilding, IconPhoneCall } from '@tabler/icons-react'
 import { FullContentLoader } from 'components/FullContentLoader'
 import FullPageError from 'components/FullPageError'
 import { db } from 'containers/Root'
 import { collection, doc } from 'firebase/firestore'
-import { useDocument, useDocumentData } from 'react-firebase-hooks/firestore'
-import { useParams } from 'react-router-dom'
 import {
   setUserInterests,
-  updateUserVisibility,
   updateTagsCollection,
+  updateUserVisibility,
 } from 'firebase/queries/userQueries'
+import { WorkoutSessionFeed } from 'modules/workoutsession/components/WorkoutSessionFeed'
 import { useState } from 'react'
+import { useDocument, useDocumentData } from 'react-firebase-hooks/firestore'
+import { useParams } from 'react-router-dom'
+import { MyCompletedWorkouts } from '../components/MyCompletedWorkouts'
+import { MyWorkouts } from '../components/MyWorkouts'
+import TagView from './Tags'
 
 function UserDetail() {
   const { classes } = useStyles()
   const { userId } = useParams() as { userId: string }
   const userRef = doc(db, 'users', userId)
-  const [value, loadingUser, errorUser] = useDocumentData(userRef)
-  const user = value
+  const [value, loading, error] = useDocumentData(userRef)
   const [tagsFromDB, loadingTags, errorTags] = useDocumentData(
     doc(db, 'tags', 'ZP3S5zqtbEnjYZRvKMxB')
   )
   const tagList = tagsFromDB?.tags
-  //True needs to be changed to reflect the actual settings
-  const [isChecked, setIsChecked] = useState(true)
-  if (loadingUser || loadingTags) {
+  const user = value
+
+  const [isChecked, setIsChecked] = useState(false)
+
+  if (loading || loadingTags) {
     return <FullContentLoader />
   }
-  if (errorUser || errorTags) {
+  if (error || errorTags) {
     return <FullPageError />
   }
 
   return (
-    <div className={classes.detailsWrapper}>
+    <Stack justify="flex-start">
+      <TagView />
       <Container mt={'lg'} size={700}>
         <Title order={2} className={classes.title} mb="md">
           Profil
@@ -73,44 +81,34 @@ function UserDetail() {
                 </div>
               </Group>
               <Checkbox
-                checked={user.public}
-                onClick={() => {
-                  setIsChecked(!isChecked)
-                }}
+                checked={user ? user.public : false}
                 onChange={() => {
-                  updateUserVisibility(userId, isChecked)
+                  updateUserVisibility(userId, !isChecked).then(() => {
+                    showNotification({
+                      title: 'Oppdatert',
+                      message: 'Din synlighet er nå endret',
+                      color: 'teal',
+                    })
+                    setIsChecked(!isChecked)
+                  })
                 }}
                 label="Jeg vil at profilen min skal være offentlig"
-              />
-              <MultiSelect
-                label="Mine interesser"
-                data={tagList} //replace with all tags
-                placeholder="Velg interesser"
-                nothingFound="Ingen funnet"
-                searchable
-                multiple
-                creatable
-                getCreateLabel={tags => `+ Legg til ${tags}`}
-                onChange={tags => {
-                  // set of strings
-                  setUserInterests(userId, tags)
-                  updateTagsCollection(tags)
-                  console.log(tags)
-                  return tags
-                }}
-
-                /* onCreate={(tag) => {
-                    user.interests.push(tag)
-                    setUserInterests(userId, user.interests)
-                    console.log(user.interests)                    
-                    return tag;
-                  }} */
               />
             </div>
           )}
         </Paper>
       </Container>
-    </div>
+      <SimpleGrid cols={2}>
+        <Stack>
+          <Title> My Workouts </Title>
+          <MyWorkouts userId={userId} />
+        </Stack>
+        <Stack>
+          <Title> Completed Workouts</Title>
+          <MyCompletedWorkouts userId={userId} />
+        </Stack>
+      </SimpleGrid>
+    </Stack>
   )
 }
 
