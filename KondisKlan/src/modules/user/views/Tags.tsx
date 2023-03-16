@@ -1,4 +1,4 @@
-import { ActionIcon, Container, SimpleGrid } from '@mantine/core'
+import { ActionIcon, Container, Select, SimpleGrid } from '@mantine/core'
 import { IconX } from '@tabler/icons-react'
 import { Group, Title, Badge, Avatar, MultiSelect } from '@mantine/core'
 import { FullContentLoader } from 'components/FullContentLoader'
@@ -56,8 +56,8 @@ export default function TagView() {
         ))}
       </Group>
 
-      <MultiSelect
-        label="Nye interesser"
+      <Select
+        label="Legg til nye interesser. Begynn å skrive for å legge til en interresse som ikke er i listen."
         data={tagList}
         placeholder="Velg interesser"
         nothingFound="Ingen funnet"

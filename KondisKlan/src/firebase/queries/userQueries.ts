@@ -55,12 +55,12 @@ export async function setUserInterests(userId: string, interests: string[]) {
   })
 }
 
-export async function updateTagsCollection(tag: string[]) {
+export async function updateTagsCollection(tag: string | null) {
   const tagsRef = doc(db, 'tags', 'ZP3S5zqtbEnjYZRvKMxB')
   const tags = await getDoc(tagsRef).then(doc => doc.data())
   const tagsList = tags?.tags
 
-  tagsList.push(...tag)
+  tagsList.push(tag)
   const tagsArray = Array.from(new Set(tagsList))
   console.log(tagsArray)
 
