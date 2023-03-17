@@ -11,7 +11,8 @@ import {
   Text,
   Title,
 } from '@mantine/core'
-import { IconAt } from '@tabler/icons-react'
+import { showNotification } from '@mantine/notifications'
+import { IconAt, IconBuilding, IconPhoneCall } from '@tabler/icons-react'
 import { FullContentLoader } from 'components/FullContentLoader'
 import FullPageError from 'components/FullPageError'
 import { db } from 'containers/Root'
@@ -32,25 +33,21 @@ function UserDetail() {
   const { classes } = useStyles()
   const { userId } = useParams() as { userId: string }
   const userRef = doc(db, 'users', userId)
-  const [data, loading, error] = useDocumentData(userRef)
-  const [tagsFromDB, loadingTags, errorTags] = useDocumentData(
-    doc(db, 'tags', 'ZP3S5zqtbEnjYZRvKMxB')
-  )
-  const tagList = tagsFromDB?.tags
-  //True needs to be changed to reflect the actual settings
-  const [isChecked, setIsChecked] = useState(true)
+  const [value, loading, error] = useDocumentData(userRef)
+  const user = value
 
-  if (loading || loadingTags) {
+  const [isChecked, setIsChecked] = useState(false)
+
+  if (loading) {
     return <FullContentLoader />
   }
-  if (error || errorTags) {
+  if (error) {
     return <FullPageError />
   }
 
-  const user = data
-
   return (
     <Stack justify="flex-start">
+      <TagView />
       <Container mt={'lg'} size={700}>
         <Title weight={'bold'} order={2} className={classes.title} mb="md">
           Profil
@@ -70,36 +67,18 @@ function UserDetail() {
                 </div>
               </Group>
               <Checkbox
-                my="sm"
-                classNames={{
-                  body: classes.checkBox,
-                  input: classes.checkBoxInput,
-                }}
-                checked={user.public}
-                onClick={() => {
-                  setIsChecked(!isChecked)
-                }}
+                checked={user ? user.public : false}
                 onChange={() => {
-                  updateUserVisibility(userId, isChecked)
+                  updateUserVisibility(userId, !isChecked).then(() => {
+                    showNotification({
+                      title: 'Oppdatert',
+                      message: 'Din synlighet er nå endret',
+                      color: 'teal',
+                    })
+                    setIsChecked(!isChecked)
+                  })
                 }}
                 label="Jeg vil at profilen min skal være offentlig"
-              />
-              <MultiSelect
-                label="Mine interesser"
-                data={tagList} //replace with all tags
-                placeholder="Velg interesser"
-                nothingFound="Ingen funnet"
-                searchable
-                multiple
-                creatable
-                getCreateLabel={tags => `+ Legg til ${tags}`}
-                onChange={tags => {
-                  // set of strings
-                  setUserInterests(userId, tags)
-                  updateTagsCollection(tags)
-                  console.log(tags)
-                  return tags
-                }}
               />
             </div>
           )}

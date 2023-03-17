@@ -15,6 +15,8 @@ import { format } from 'date-fns'
 import { getAuth } from 'firebase/auth'
 import {
   addCompletedExerciseDocument,
+  addExerciseDocument,
+  addRmMax,
   useExerciseCollection,
 } from 'firebase/queries/exerciseQueries'
 import { useUserDocument } from 'firebase/queries/userQueries'
@@ -45,11 +47,12 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
 
   //const { data: userData, userLoading, userError } = useUser(workoutsession.createdBy)
   const { classes } = useStyles()
+
+  if (error || userError || !data || !userData) return <FullPageError />
+
   if (loading || userLoading) {
     return <EmptyLoader />
   }
-
-  if (error || userError) return <FullPageError />
 
   const exerciseList = data as Exercise[]
   const user = userData as UserType
@@ -72,6 +75,10 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
       .then(docRef => {
         exerciseList.forEach(exercise => {
           addCompletedExerciseDocument(docRef.id, exercise)
+          //if exercise has weight, add to rmMax
+          if (exercise.weight) {
+            addRmMax(completedBy, exercise, completedAt)
+          }
         })
       })
       .then(() => {
