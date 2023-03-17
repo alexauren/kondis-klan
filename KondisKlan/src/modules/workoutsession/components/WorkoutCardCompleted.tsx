@@ -24,6 +24,7 @@ import { ExerciseCard } from 'modules/exercise/components/ExerciseCard'
 import { Exercise } from 'modules/exercise/types'
 import { UserType } from 'modules/user/types'
 import { WorkoutSessionComplete } from 'modules/workoutsession/types'
+import { Link } from 'react-router-dom'
 
 //interface
 interface WorkoutCard {
@@ -106,6 +107,8 @@ export function WorkoutCardCompleted({ workoutsession }: WorkoutCard) {
           <Group>
             <div>
               <Text
+                component={Link}
+                to={'/profile/' + userCompleted.uid}
                 align="left"
                 weight={'bold'}
                 size={'md'}
@@ -120,6 +123,8 @@ export function WorkoutCardCompleted({ workoutsession }: WorkoutCard) {
             <Divider orientation="vertical" />
             <div>
               <Text
+                component={Link}
+                to={'/profile/' + userCreator.uid}
                 align="left"
                 weight={'bold'}
                 size={'md'}
