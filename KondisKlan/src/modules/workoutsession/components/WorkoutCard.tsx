@@ -13,6 +13,7 @@ import { EmptyLoader } from 'components/EmptyLoader'
 import FullPageError from 'components/FullPageError'
 import { format } from 'date-fns'
 import { getAuth } from 'firebase/auth'
+import { Timestamp } from 'firebase/firestore'
 import {
   addCompletedExerciseDocument,
   addExerciseDocument,
