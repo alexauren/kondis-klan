@@ -18,6 +18,7 @@ import {
   IconSettings,
   IconLogout,
   IconPlus,
+  IconChartHistogram,
 } from '@tabler/icons-react'
 import Logo from 'assets/logo.png'
 import { useMobile } from 'util/hooks'
@@ -69,12 +70,14 @@ export default function NavbarMinimal({ isHidden }: NavbarMinimalProps) {
   const [active, setActive] = useState(0)
   const auth = getAuth()
   const loggedInUser = auth.currentUser
+  const { classes } = useStyles()
 
   const mockdata = [
     { icon: IconHome2, label: 'Hjem', link: '/' },
     { icon: IconPlus, label: 'Ny økt', link: '/newprogram' },
     { icon: IconUser, label: 'Profil', link: `/profile/${loggedInUser!.uid}` },
     { icon: IconSettings, label: 'Innstillinger', link: '/settings' },
+    { icon: IconChartHistogram, label: 'Progresjon', link: '/progression' },
   ]
 
   const links = mockdata.map((link, index) => (
@@ -94,11 +97,11 @@ export default function NavbarMinimal({ isHidden }: NavbarMinimalProps) {
       hiddenBreakpoint="xs"
       width={{ lg: 80, sm: 200, xs: 200 }}
       style={{
-        backgroundColor: 'white',
         overflowY: 'auto',
         overscrollBehavior: 'contain',
         fontSize: '12px',
       }}
+      className={classes.navbar}
     >
       <Navbar.Section grow mt={50}>
         <Stack justify="center" spacing={10}>
@@ -111,7 +114,7 @@ export default function NavbarMinimal({ isHidden }: NavbarMinimalProps) {
             link="/"
             to="/"
             icon={IconLogout}
-            label="Logout"
+            label="Logg ut"
             onClick={() => signOut(auth)}
           />
         </Stack>
@@ -149,5 +152,8 @@ const useStyles = createStyles(theme => ({
       color: theme.fn.variant({ variant: 'light', color: theme.primaryColor })
         .color,
     },
+  },
+  navbar: {
+    backgroundColor: theme.white,
   },
 }))
