@@ -5,8 +5,10 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   setDoc,
+  updateDoc,
 } from 'firebase/firestore'
 import {
   useCollectionData,
@@ -106,4 +108,18 @@ async function updateExerciseDocument(
     data
   )
   console.log('Document successfully updated!')
+}
+
+export async function addExercise(exercise: string | null) {
+  const exerciseRef = doc(db, 'exercises', 'kbbjPMMnikSyEdFrZaTf')
+  const exercises = await getDoc(exerciseRef).then(doc => doc.data())
+  const exerciseList = exercises?.exercises
+  console.log('ex list' + exerciseList)
+
+  exerciseList.push(exercise)
+  const exerciseArray = Array.from(new Set(exerciseList))
+  console.log(exerciseArray)
+  await updateDoc(exerciseRef, {
+    exercises: exerciseArray,
+  })
 }
