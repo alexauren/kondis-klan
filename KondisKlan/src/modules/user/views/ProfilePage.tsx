@@ -34,19 +34,15 @@ function UserDetail() {
   const { classes } = useStyles()
   const { userId } = useParams() as { userId: string }
   const userRef = doc(db, 'users', userId)
-  const [data, loading, error] = useDocumentData(userRef)
-  const [tagsFromDB, loadingTags, errorTags] = useDocumentData(
-    doc(db, 'tags', 'ZP3S5zqtbEnjYZRvKMxB')
-  )
-  const tagList = tagsFromDB?.tags
+  const [value, loading, error] = useDocumentData(userRef)
   const user = value
 
   const [isChecked, setIsChecked] = useState(false)
 
-  if (loading || loadingTags) {
+  if (loading) {
     return <FullContentLoader />
   }
-  if (error || errorTags) {
+  if (error) {
     return <FullPageError />
   }
 
