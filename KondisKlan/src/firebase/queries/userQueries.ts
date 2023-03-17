@@ -56,6 +56,7 @@ export async function addUserInterests(userId: string, interestList: string[]) {
 
 export async function setUserInterests(userId: string, interests: string[]) {
   const user = doc(db, 'users', userId)
+  console.log('trying to set user interests now')
   await updateDoc(user, {
     interests: interests,
   })

@@ -2,8 +2,8 @@ import {
   Checkbox,
   Container,
   createStyles,
+  Divider,
   Group,
-  MultiSelect,
   Paper,
   SimpleGrid,
   Space,
@@ -12,21 +12,18 @@ import {
   Title,
 } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
-import { IconAt, IconBuilding, IconPhoneCall } from '@tabler/icons-react'
+import { IconAt, IconUser } from '@tabler/icons-react'
 import { FullContentLoader } from 'components/FullContentLoader'
 import FullPageError from 'components/FullPageError'
 import { db } from 'containers/Root'
 import { doc } from 'firebase/firestore'
-import {
-  setUserInterests,
-  updateTagsCollection,
-  updateUserVisibility,
-} from 'firebase/queries/userQueries'
+import { updateUserVisibility } from 'firebase/queries/userQueries'
 import { useState } from 'react'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { useParams } from 'react-router-dom'
 import { MyCompletedWorkouts } from '../components/MyCompletedWorkouts'
 import { MyWorkouts } from '../components/MyWorkouts'
+import { UserType } from '../types'
 import TagView from './Tags'
 
 function UserDetail() {
@@ -34,7 +31,6 @@ function UserDetail() {
   const { userId } = useParams() as { userId: string }
   const userRef = doc(db, 'users', userId)
   const [value, loading, error] = useDocumentData(userRef)
-  const user = value
 
   const [isChecked, setIsChecked] = useState(false)
 
@@ -44,28 +40,28 @@ function UserDetail() {
   if (error) {
     return <FullPageError />
   }
+  const user = value as UserType
 
   return (
     <Stack justify="flex-start">
-      <TagView />
-      <Container mt={'lg'} size={700}>
-        <Title weight={'bold'} order={2} className={classes.title} mb="md">
-          Profil
-        </Title>
-        <TagView />
-        <Paper shadow={'sm'} p={'lg'} className={classes.paper}>
+      <Container mt={'lg'}>
+        <Paper shadow={'lg'} p={'lg'} radius="md" className={classes.paper}>
           {user && (
             <div className={classes.detailsCard}>
-              <Group mt="sm" position="apart">
+              <Group mt="sm">
+                <IconUser className={classes.iconUser} stroke={1.2} size={70} />
                 <div>
-                  <Space h={'xs'} />
-                  <Text className={classes.name}>{user.name}</Text>
+                  <Text color={'kondisGreen.8'} className={classes.name}>
+                    {user.name}
+                  </Text>
                   <Group noWrap spacing={10} mt={3}>
-                    <IconAt />
-                    <Text size="sm">{user.email}</Text>
+                    <IconAt size={18} />
+                    <Text size="md">{user.email}</Text>
                   </Group>
                 </div>
               </Group>
+              <Divider color={'kondisGreen.4'} my="lg" />
+              <TagView user={user} />
               <Checkbox
                 checked={user ? user.public : false}
                 onChange={() => {
@@ -114,8 +110,10 @@ const useStyles = createStyles(theme => ({
     backgroundColor: theme.colors[theme.primaryColor][1],
   },
   paper: {
-    backgroundColor: theme.colors[theme.primaryColor][3],
+    backgroundColor: theme.colors[theme.primaryColor][1],
     padding: theme.spacing.xl,
+    border: '2px solid',
+    borderColor: theme.colors[theme.primaryColor][4],
     color: theme.colors[theme.primaryColor][6],
   },
   title: {
@@ -129,11 +127,14 @@ const useStyles = createStyles(theme => ({
   name: {
     fontFamily: `Greycliff CF, ${theme.fontFamily}`,
     fontWeight: 500,
-    fontSize: theme.fontSizes.lg * 1.25,
+    fontSize: theme.fontSizes.lg * 1.5,
   },
   role: {
     fontWeight: 700,
     textTransform: 'uppercase',
     fontSize: theme.fontSizes.lg,
+  },
+  iconUser: {
+    color: theme.colors[theme.primaryColor][4],
   },
 }))

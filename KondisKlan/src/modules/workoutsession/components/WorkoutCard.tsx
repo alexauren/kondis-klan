@@ -42,17 +42,16 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
     error: userError,
     loading: userLoading,
   } = useUserDocument(workoutsession.createdBy)
-  const auth = getAuth()
   const loggedInUser = useContext(UserContext)
 
   //const { data: userData, userLoading, userError } = useUser(workoutsession.createdBy)
   const { classes } = useStyles()
 
-  if (error || userError || !data || !userData) return <FullPageError />
-
   if (loading || userLoading) {
     return <EmptyLoader />
   }
+
+  if (error || userError || !data || !userData) return <FullPageError />
 
   const exerciseList = data as Exercise[]
   const user = userData as UserType
@@ -61,8 +60,6 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
     workoutsession.createdAt.toDate(),
     'dd.MM.yyyy'
   )
-
-  console.log(workoutsession)
 
   function handleComplete() {
     const completedBy = loggedInUser.uid
@@ -89,9 +86,6 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
         })
       })
   }
-
-  //console.log(workoutsession)
-  console.log('denne skal returne user: ', user)
 
   return (
     <Card radius={'lg'} shadow={'sm'} className={classes.card}>
@@ -128,7 +122,6 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
         </Button>
       </Group>
     </Card>
-    // </Container>
   )
 }
 

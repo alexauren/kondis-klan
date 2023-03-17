@@ -32,6 +32,7 @@ import { useContext, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { useNavigate } from 'react-router-dom'
+import { StepperTags } from './StepperTags'
 
 export function NewProgram() {
   const { classes } = useStyles()
@@ -42,12 +43,13 @@ export function NewProgram() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [exerciseList, setExerciseList] = useState<Exercise[]>([])
   const [date, setDate] = useState<Date | null>(null)
+  const [tags, setTags] = useState<string[]>([])
   const user = useContext(UserContext)
 
   const [tagsFromDB, loading, error] = useDocumentData(
     doc(db, 'tags', 'ZP3S5zqtbEnjYZRvKMxB')
   )
-  const tagList = tagsFromDB?.tags
+  const tagList: string[] = tagsFromDB?.tags
 
   const uid = user.uid
 
@@ -63,9 +65,10 @@ export function NewProgram() {
     {
       date ? (values.createdAt = date) : null
     }
+    values.createdBy = uid
+    values.tags = tags
 
     setIsSubmitting(true)
-    values.createdBy = uid
 
     addWorkoutSession(values)
       .then(function (docRef) {
@@ -114,7 +117,7 @@ export function NewProgram() {
   if (error) return <FullPageError />
   return (
     <>
-      <Card shadow={'sm'} className={classes.card}>
+      <Card radius={'lg'} shadow={'sm'} className={classes.card}>
         <Title order={2} color="kondisGreen.7">
           Opprett økt
         </Title>
@@ -126,6 +129,7 @@ export function NewProgram() {
             mt="md"
             classNames={{
               separator: classes.step,
+              stepIcon: classes.stepIcon,
             }}
           >
             <Stepper.Step
@@ -190,23 +194,7 @@ export function NewProgram() {
               </SimpleGrid>
             </Stepper.Step>
             <Stepper.Step label="Third step" description="Choose tags">
-              <MultiSelect
-                label="Mine tags"
-                data={tagList} //replace with all tags
-                placeholder="Velg tags"
-                nothingFound="Ingen funnet"
-                value={form.values.tags}
-                searchable
-                multiple
-                creatable
-                getCreateLabel={tags => `+ Legg til ${tags}`}
-                onChange={tags => {
-                  updateTagsCollection(tags)
-                  form.setFieldValue('tags', tags)
-                  console.log(tags)
-                  return tags
-                }}
-              />
+              <StepperTags tags={tags} data={tagList} callback={setTags} />
             </Stepper.Step>
 
             <Stepper.Completed>
@@ -240,7 +228,7 @@ const useStyles = createStyles(theme => ({
   card: {
     border: '2px solid',
     borderColor: theme.colors[theme.primaryColor][4],
-    backgroundColor: theme.colors[theme.primaryColor][2],
+    backgroundColor: theme.colors[theme.primaryColor][1],
     color: theme.colors[theme.primaryColor][7],
   },
   stepDescription: {
@@ -248,13 +236,18 @@ const useStyles = createStyles(theme => ({
     backgroundColor: theme.colors[theme.primaryColor][2],
   },
   step: {
-    color: 'hotpink',
-    backgroundColor: theme.colors[theme.primaryColor][0],
+    backgroundColor: theme.colors[theme.primaryColor][3],
   },
   textColorTheme: {
     color: theme.colors[theme.primaryColor][7],
   },
   required: {
     color: theme.colors['red'][7],
+  },
+  stepIcon: {
+    color: theme.colors[theme.primaryColor][9],
+    backgroundColor: theme.white,
+    border: '2px solid',
+    borderColor: theme.colors[theme.primaryColor][3],
   },
 }))
