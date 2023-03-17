@@ -68,6 +68,22 @@ export async function addCompletedExerciseDocument(
   )
 }
 
+addRmMax
+
+export async function addRmMax(userid: string, exercise: Exercise, date: Date) {
+  const exerciseName = exercise.name.toLowerCase().replace(/ /g, '')
+  const data = {
+    date: date,
+    rmMax: exercise.weight,
+  }
+
+  //use addDoc to add a document to the collection
+  return await addDoc(
+    collection(db, `users/${userid}/progresjon/${exerciseName}`),
+    data
+  )
+}
+
 async function removeExerciseDocument(
   workoutSessionRef: string,
   documentRef: string

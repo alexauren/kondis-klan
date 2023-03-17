@@ -20,6 +20,7 @@ import {
 import {
   addCompletedExerciseDocument,
   addExerciseDocument,
+  addRmMax,
   useExerciseCollection,
 } from 'firebase/queries/exerciseQueries'
 import { FullContentLoader } from 'components/FullContentLoader'
@@ -74,6 +75,10 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
       .then(docRef => {
         exerciseList.forEach(exercise => {
           addCompletedExerciseDocument(docRef.id, exercise)
+          //if exercise has weight, add to rmMax
+          if (exercise.weight) {
+            addRmMax(completedBy, exercise, completedAt)
+          }
         })
       })
       .then(() => {
