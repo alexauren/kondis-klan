@@ -1,4 +1,4 @@
-import { Button, Container, Select, Title } from '@mantine/core'
+import { Button, Card, Container, Select, Title } from '@mantine/core'
 import { getExerciseProgress } from 'firebase/queries/exerciseQueries'
 import {
   CategoryScale,
@@ -11,8 +11,31 @@ import {
   Title as ChartTitle,
 } from 'chart.js'
 import { Line } from 'react-chartjs-2'
+import { UserContext } from '../UserAuthContext'
+import { useContext, useState } from 'react'
+import { collection, getDocs } from 'firebase/firestore'
+import { db } from 'containers/Root'
+import { useCollectionData } from 'react-firebase-hooks/firestore'
+import { FullContentLoader } from 'components/FullContentLoader'
+import FullPageError from 'components/FullPageError'
+import { ExerciseProgressType } from '../types'
+import { format } from 'date-fns'
 
 export default function ProgressionView() {
+  const user = useContext(UserContext)
+  const collectionRef = collection(db, `users/${user.uid}/progresjon/`)
+  const [data, loading, error] = useCollectionData(collectionRef)
+  const exerciseNames = data?.map(doc => doc.name)
+  const [labels, setLabels] = useState<string[]>([])
+  const [weightData, setWeightData] = useState<number[]>([])
+
+  if (loading) {
+    return <FullContentLoader />
+  }
+  if (error) {
+    return <FullPageError />
+  }
+
   ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -23,59 +46,80 @@ export default function ProgressionView() {
     Legend
   )
 
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: true,
+        text: 'Progresjon over tid',
+      },
+    },
+    scales: {
+      y: {
+        title: {
+          display: true,
+          text: 'Vekt',
+        },
+      },
+
+      x: {
+        title: {
+          display: true,
+          text: 'Dato',
+        },
+      },
+    },
+  }
+
+  const graphData = {
+    labels,
+    datasets: [
+      {
+        label: '1RM',
+        data: weightData,
+        fill: false,
+        backgroundColor: 'rgb(0, 0, 0)',
+      },
+    ],
+  }
+
+  function showExercise(exercise: string) {
+    const exerciseData = data?.find(
+      doc => doc.name === exercise
+    ) as ExerciseProgressType
+    const labels: string[] = []
+    const weightData: number[] = []
+
+    exerciseData.progression.forEach(doc => {
+      labels.push(format(doc.time.toDate(), 'dd.MM.yyyy'))
+      weightData.push(doc.rm)
+    })
+    setLabels(labels), setWeightData(weightData)
+
+    graphData.datasets[0].data = weightData
+    graphData.labels = labels
+  }
+
   return (
     <Container style={{ width: '1200px' }}>
-      <Title ta="left">Grafer</Title>
-      <Button
-        onClick={() =>
-          console.log(
-            getExerciseProgress('CRZtS3xn9sODyC7puKEEyrRQFCi1', 'benkpress')
-          )
-        }
-      >
-        GetRMmax
-      </Button>
-      {/* <Select
-        label="Legg til nye interesser. Begynn å skrive for å legge til en interresse som ikke er i listen."
-        data={}
-        placeholder="Velg interesser"
-        nothingFound="Ingen funnet"
-        searchable
-        onChange={tags => {
-          const tagsList = user?.interests.concat(tags)
-          const tagsArray = Array.from(new Set<string>(tagsList))
-          setUserInterests(userId, tagsArray)
-          updateTagsCollection(tags)
-        }}
-      /> */}
-      <Line data={data} options={options} />
+      <Card shadow="sm" color="white">
+        <Title ta="left">Progresjon</Title>
+        <Select
+          label="Velg øvelse"
+          data={exerciseNames ? exerciseNames : []}
+          placeholder="Benkpress"
+          nothingFound="Ingen funnet"
+          searchable
+          onChange={exercise => {
+            showExercise(exercise as string)
+          }}
+        />
+
+        <Line data={graphData} options={options} />
+      </Card>
     </Container>
   )
-}
-
-export const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top' as const,
-    },
-    title: {
-      display: true,
-      text: 'Progresjon over tid',
-    },
-  },
-}
-
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July']
-
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: 'Dataset 1',
-      data: [65, 59, 80, 81, 56, 55, 40],
-      borderColor: 'rgb(255, 99, 132)',
-      backgroundColor: 'rgba(255, 99, 132, 0.5)',
-    },
-  ],
 }

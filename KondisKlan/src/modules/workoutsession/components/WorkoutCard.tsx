@@ -74,7 +74,7 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
 
   function handleComplete() {
     const completedBy = loggedInUser.uid
-    const completedAt = new Date()
+    const completedAt = Timestamp.fromDate(new Date())
     SendWorkoutToCompleted({
       workout: workoutsession,
       completedAt,

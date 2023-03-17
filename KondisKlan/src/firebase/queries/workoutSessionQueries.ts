@@ -8,6 +8,7 @@ import {
   orderBy,
   query,
   setDoc,
+  Timestamp,
   where,
 } from 'firebase/firestore'
 import {
@@ -97,7 +98,7 @@ export function useMyCompletedWorkouts(userId: string) {
 interface SendWorkoutToCompletedProps {
   workout: WorkoutSessionWithTimestamp
   completedBy: string
-  completedAt: string | Date
+  completedAt: string | Timestamp
 }
 
 export async function SendWorkoutToCompleted({

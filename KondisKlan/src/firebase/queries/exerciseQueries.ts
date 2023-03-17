@@ -8,6 +8,7 @@ import {
   getDoc,
   getDocs,
   setDoc,
+  Timestamp,
   updateDoc,
 } from 'firebase/firestore'
 import {
@@ -71,30 +72,45 @@ export async function addCompletedExerciseDocument(
   )
 }
 
-export async function addRmMax(userid: string, exercise: Exercise, date: Date) {
+export async function addRmMax(
+  userid: string,
+  exercise: Exercise,
+  date: Timestamp
+) {
   console.log('Her begynner rm max funksjonen')
   const exerciseName = exercise.name.toLowerCase().replace(/ /g, '')
   const onerm = exercise.weight! * (36 / (37 - exercise.reps!))
-  const currentRmMaxProgress = await getExerciseProgress(userid, exerciseName)
 
-  const newRmMaxProgress = {
-    progression: [
-      ...currentRmMaxProgress.progression,
-      { time: date, rm: onerm },
-    ],
-  }
+  //handle if there is no data in firebase for this exercise
+
+  const currentRmMaxProgress = await getExerciseProgress(
+    userid,
+    exerciseName
+  ).then(exerciseData => {
+    //check if there is any data in firebase for this exercise
+    if (exerciseData === undefined) {
+      console.log('Her er det ingen data')
+      const exerciseRef = doc(db, `users/${userid}/progresjon/${exerciseName}`)
+      const newRmMaxProgress = {
+        progression: [{ time: date, rm: onerm }],
+        name: exercise.name,
+      }
+      setDoc(exerciseRef, newRmMaxProgress)
+    }
+    return exerciseData
+  })
+
+  currentRmMaxProgress.progression.push({ time: date, rm: onerm })
 
   //update firebase with new data
   const exerciseRef = doc(db, `users/${userid}/progresjon/${exerciseName}`)
-  await setDoc(exerciseRef, newRmMaxProgress)
-  console.log('newRmMaxProgress' + newRmMaxProgress)
+  await setDoc(exerciseRef, currentRmMaxProgress)
 }
 
 export async function getExerciseProgress(userid: string, exercise: string) {
   const exerciseName = exercise.toLowerCase().replace(/ /g, '')
   const exerciseRef = doc(db, `users/${userid}/progresjon/${exerciseName}`)
   const exerciseData = await getDoc(exerciseRef).then(doc => doc.data())
-  console.log('exerciseData' + exerciseData)
   return exerciseData as ExerciseProgressType
 }
 

@@ -1,3 +1,5 @@
+import { Timestamp } from 'firebase/firestore'
+
 export type UserType = {
   authProvider: string
   email: string
@@ -9,10 +11,11 @@ export type UserType = {
 }
 
 export type TimeRM = {
-  time: Date
+  time: Timestamp
   rm: number
 }
 
 export type ExerciseProgressType = {
+  name: string
   progression: Array<TimeRM>
 }
