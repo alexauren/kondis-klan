@@ -33,6 +33,11 @@ import { showNotification } from '@mantine/notifications'
 import { useUserDocument } from 'firebase/queries/userQueries'
 import FullPageError from 'components/FullPageError'
 import { UserType } from 'modules/user/types'
+import { getAuth } from 'firebase/auth'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { Link } from 'react-router-dom'
+import { useContext } from 'react'
+import { UserContext } from 'modules/user/UserAuthContext'
 
 //interface
 interface WorkoutCard {
@@ -47,6 +52,9 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
     error: userError,
     loading: userLoading,
   } = useUserDocument(workoutsession.createdBy)
+  const auth = getAuth()
+  const loggedInUser = useContext(UserContext)
+
   //const { data: userData, userLoading, userError } = useUser(workoutsession.createdBy)
   const { classes } = useStyles()
 
@@ -65,7 +73,7 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
   )
 
   function handleComplete() {
-    const completedBy = 'gMYiPS1rkcQQndaN2X371LXqxyc2'
+    const completedBy = loggedInUser.uid
     const completedAt = new Date()
     SendWorkoutToCompleted({
       workout: workoutsession,
@@ -101,7 +109,12 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
         </Title>
 
         <Text align="center">
-          <Text size={'md'} color={'kondisGreen.6'}>
+          <Text
+            component={Link}
+            to={'/profile/' + user.uid}
+            size={'md'}
+            color={'kondisGreen.6'}
+          >
             Lagd av: {user.name}
           </Text>
           <Text color={'kondisGreen.8'}>Opprettet: {createdAtToString}</Text>
