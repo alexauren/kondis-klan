@@ -1,6 +1,13 @@
-import { db } from 'containers/Root'
 import { UserInfo } from 'firebase/auth'
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
+import { db } from 'containers/Root'
+import {
+  setDoc,
+  doc,
+  updateDoc,
+  getDoc,
+  DocumentData,
+} from 'firebase/firestore'
+import { useDocument, useDocumentData } from 'react-firebase-hooks/firestore'
 
 export async function createUserDoc(
   { uid, email }: UserInfo,
@@ -31,6 +38,7 @@ export async function updateUserVisibility(
   await updateDoc(user, {
     public: visibility,
   })
+  console.log('Finito?')
 }
 
 export async function addUserInterests(userId: string, interestList: string[]) {
@@ -54,15 +62,23 @@ export async function setUserInterests(userId: string, interests: string[]) {
   })
 }
 
-export async function updateTagsCollection(tag: string[] | null) {
+export async function updateTagsCollection(tag: string[]) {
   const tagsRef = doc(db, 'tags', 'ZP3S5zqtbEnjYZRvKMxB')
   const tags = await getDoc(tagsRef).then(doc => doc.data())
   const tagsList = tags?.tags
 
-  tagsList.push(tag)
+  tagsList.push(...tag)
   const tagsArray = Array.from(new Set(tagsList))
+  console.log(tagsArray)
 
   await updateDoc(tagsRef, {
     tags: tagsArray,
   })
+}
+
+export function useUserDocument(uid: string) {
+  const userDocumentRef = doc(db, `users/${uid}`)
+  const [data, loading, error] = useDocumentData<DocumentData>(userDocumentRef)
+
+  return { data, loading, error }
 }

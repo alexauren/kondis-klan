@@ -1,52 +1,40 @@
 import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  DocumentData,
-  getDocs,
-  orderBy,
-  query,
-  setDoc,
-} from '@firebase/firestore'
-import {
   Button,
   Card,
+  createStyles,
   Group,
   Modal,
+  MultiSelect,
   SimpleGrid,
   Stepper,
+  Text,
   TextInput,
   Title,
   useMantineTheme,
 } from '@mantine/core'
 import { DatePicker } from '@mantine/dates'
 import { useForm } from '@mantine/form'
+import { showNotification } from '@mantine/notifications'
+import { FullContentLoader } from 'components/FullContentLoader'
+import FullPageError from 'components/FullPageError'
 import { db } from 'containers/Root'
+import { getAuth } from 'firebase/auth'
+import { doc } from 'firebase/firestore'
 import { addExerciseDocument } from 'firebase/queries/exerciseQueries'
+import { updateTagsCollection } from 'firebase/queries/userQueries'
 import { addWorkoutSession } from 'firebase/queries/workoutSessionQueries'
 import { ExerciseCard } from 'modules/exercise/components/ExerciseCard'
-import { Exercise } from 'modules/exercise/types'
 import { ExerciseForm } from 'modules/exercise/form/ExerciseForm'
-import {
-  WorkoutSession,
-  workoutSessionConverter,
-} from 'modules/workoutsession/types'
-import { useEffect, useState } from 'react'
+import { Exercise } from 'modules/exercise/types'
+import { UserContext } from 'modules/user/UserAuthContext'
+import { WorkoutSession } from 'modules/workoutsession/types'
+import { useContext, useState } from 'react'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { useNavigate } from 'react-router-dom'
-import { showNotification } from '@mantine/notifications'
-import { MultiSelect } from '@mantine/core'
-import {
-  useCollectionData,
-  useDocumentData,
-} from 'react-firebase-hooks/firestore'
-import {
-  setUserInterests,
-  updateUserVisibility,
-  updateTagsCollection,
-} from 'firebase/queries/userQueries'
 
 export function NewProgram() {
+  const { classes } = useStyles()
   const theme = useMantineTheme()
   const navigate = useNavigate()
   const [active, setActive] = useState(0)
@@ -54,11 +42,14 @@ export function NewProgram() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [exerciseList, setExerciseList] = useState<Exercise[]>([])
   const [date, setDate] = useState<Date | null>(null)
+  const user = useContext(UserContext)
 
-  const [tagsFromDB, loadingTags, errorTags] = useDocumentData(
+  const [tagsFromDB, loading, error] = useDocumentData(
     doc(db, 'tags', 'ZP3S5zqtbEnjYZRvKMxB')
   )
   const tagList = tagsFromDB?.tags
+
+  const uid = user.uid
 
   const form = useForm<WorkoutSession>({
     initialValues: { title: '', createdBy: '', createdAt: '', tags: [] },
@@ -74,6 +65,7 @@ export function NewProgram() {
     }
 
     setIsSubmitting(true)
+    values.createdBy = uid
 
     addWorkoutSession(values)
       .then(function (docRef) {
@@ -93,7 +85,7 @@ export function NewProgram() {
   }
 
   function handleNextStep() {
-    console.log('active: ' + active)
+    //console.log('active: ' + active)
     if (active === 2) {
       handleSubmit(form.values)
     }
@@ -106,7 +98,7 @@ export function NewProgram() {
 
     if (active === 0) {
       //validate that title and createdBy is filled out
-      if (form.values.title && form.values.createdBy) {
+      if (form.values.title) {
         setActive(active + 1)
       }
     }
@@ -117,48 +109,66 @@ export function NewProgram() {
       setActive(active - 1)
     }
   }
+  if (loading) return <FullContentLoader />
+
+  if (error) return <FullPageError />
   return (
     <>
-      <Card withBorder shadow={'sm'}>
-        <Title order={2}>Opprett økt</Title>
+      <Card shadow={'sm'} className={classes.card}>
+        <Title order={2} color="kondisGreen.7">
+          Opprett økt
+        </Title>
         <form onSubmit={form.onSubmit(values => handleSubmit(values))}>
           <Stepper
             active={active}
             onStepClick={setActive}
             breakpoint="sm"
             mt="md"
+            classNames={{
+              separator: classes.step,
+            }}
           >
-            <Stepper.Step label="Steg 1" description="Opprett et nytt program">
+            <Stepper.Step
+              label="Steg 1"
+              description={
+                <Text color="kondisGreen.7">Opprett et nytt program</Text>
+              }
+            >
               <TextInput
+                classNames={{
+                  required: classes.required,
+                  label: classes.textColorTheme,
+                }}
                 withAsterisk
-                label="Tittel"
-                placeholder="Push, Pull, Legs"
+                label={'Tittel'}
+                placeholder="Overkropp, Bein, etc."
                 {...form.getInputProps('title')}
               />
-              <TextInput
-                mt="sm"
-                label="Laget av (skal fjernes)"
-                placeholder="john@smith.com"
-                {...form.getInputProps('createdBy')}
-              />
               <DatePicker
-                label="Created date"
-                placeholder="Choose date"
+                classNames={{
+                  required: classes.required,
+                  label: classes.textColorTheme,
+                }}
+                label="Dato opprettet"
+                placeholder="Velg dato"
                 value={date}
                 onChange={setDate}
               />
             </Stepper.Step>
-            <Stepper.Step label="Second step" description="Choose exercises">
+            <Stepper.Step
+              label="Steg 2"
+              description={<Text color="kondisGreen.7">Legg til øvelser</Text>}
+            >
               <Button
-                variant="outline"
+                variant="light"
                 onClick={() => {
                   setOpened(true)
                 }}
               >
-                Choose exercises
+                Legg til øvelser
               </Button>
               <Modal
-                title="Choose exercises"
+                title="Legg til øvelser"
                 size={'lg'}
                 opened={opened}
                 onClose={() => setOpened(false)}
@@ -210,14 +220,14 @@ export function NewProgram() {
               disabled={active == 0}
               onClick={handlePreviousStep}
             >
-              Back
+              Tilbake
             </Button>
             <Button
               type={active === 3 ? 'submit' : 'button'}
               onClick={handleNextStep}
               disabled={isSubmitting}
             >
-              {active === 2 ? 'Finish' : 'Next'}
+              {active === 2 ? 'Fullfør' : 'Neste'}
             </Button>
           </Group>
         </form>
@@ -225,3 +235,26 @@ export function NewProgram() {
     </>
   )
 }
+
+const useStyles = createStyles(theme => ({
+  card: {
+    border: '2px solid',
+    borderColor: theme.colors[theme.primaryColor][4],
+    backgroundColor: theme.colors[theme.primaryColor][2],
+    color: theme.colors[theme.primaryColor][7],
+  },
+  stepDescription: {
+    color: theme.colors[theme.primaryColor][7],
+    backgroundColor: theme.colors[theme.primaryColor][2],
+  },
+  step: {
+    color: 'hotpink',
+    backgroundColor: theme.colors[theme.primaryColor][0],
+  },
+  textColorTheme: {
+    color: theme.colors[theme.primaryColor][7],
+  },
+  required: {
+    color: theme.colors['red'][7],
+  },
+}))

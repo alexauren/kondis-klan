@@ -17,10 +17,11 @@ import {
 import { db } from 'containers/Root'
 import {
   WorkoutSession,
-  WorkoutsessionComplete,
+  WorkoutSessionComplete,
   workoutSessionConverter,
   WorkoutSessionDocument,
   WorkoutSessionWithTimestamp,
+  workoutSessionCompletedConverter,
 } from 'modules/workoutsession/types'
 import { IconSquareRoundedChevronsRightFilled } from '@tabler/icons-react'
 
@@ -82,7 +83,7 @@ export function useMyWorkouts(userId: string) {
 
 export function useMyCompletedWorkouts(userId: string) {
   const collectionRef = collection(db, 'completedworkouts').withConverter(
-    workoutSessionConverter
+    workoutSessionCompletedConverter
   )
   const querydata = query(
     collectionRef,
