@@ -1,28 +1,19 @@
 import {
-  Text,
-  Container,
-  Title,
-  SimpleGrid,
-  Card,
-  Skeleton,
+  Badge,
   Button,
+  Card,
   createStyles,
   Group,
+  SimpleGrid,
+  Text,
+  Title,
 } from '@mantine/core'
-import { Exercise } from 'modules/exercise/types'
-import { ExerciseCard } from 'modules/exercise/components/ExerciseCard'
-import {
-  WorkoutSession,
-  WorkoutSessionDocument,
-  WorkoutSessionWithTimestamp,
-} from 'modules/workoutsession/types'
-import { useExerciseCollection } from 'firebase/queries/exerciseQueries'
-import { FullContentLoader } from 'components/FullContentLoader'
 import { EmptyLoader } from 'components/EmptyLoader'
-import { format } from 'date-fns'
+import { useExerciseCollection } from 'firebase/queries/exerciseQueries'
 import { SendWorkoutToCompleted } from 'firebase/queries/workoutSessionQueries'
-import { Timestamp } from 'firebase/firestore'
-import { useDocumentData } from 'react-firebase-hooks/firestore'
+import { ExerciseCard } from 'modules/exercise/components/ExerciseCard'
+import { Exercise } from 'modules/exercise/types'
+import { WorkoutSessionWithTimestamp } from 'modules/workoutsession/types'
 
 //interface
 interface WorkoutCard {
@@ -59,10 +50,12 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
 
   const exercises2 = data as Exercise[]
 
-  const createdAtToString = format(
-    workoutsession.createdAt.toDate(),
-    'dd.MM.yyyy'
-  )
+  // const createdAtToString = format(
+  //   workoutsession.createdAt.toDate(),
+  //   'dd.MM.yyyy'
+  // )
+
+  console.log(workoutsession)
 
   console.log(workoutsession)
 
@@ -71,10 +64,17 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
       <Title color={'kondisGreen.0'} transform="uppercase" order={3}>
         {workoutsession.title}
       </Title>
+      <div>
+        {workoutsession.tags?.map((tag, index) => (
+          <Badge color="pink" variant="filled">
+            {workoutsession.tags?.[index]}
+          </Badge>
+        ))}
+      </div>
 
       <Text>
         <Text>Lagd av: {workoutsession.createdBy}</Text>
-        <Text color={'kondisGreen.7'}>Opprettet: {createdAtToString}</Text>
+        <Text color={'kondisGreen.7'}>Opprettet: {'createdAtToString'}</Text>
       </Text>
       <SimpleGrid
         cols={3}

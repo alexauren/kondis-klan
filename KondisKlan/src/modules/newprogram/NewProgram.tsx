@@ -1,4 +1,14 @@
-import { addDoc, collection } from '@firebase/firestore'
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  DocumentData,
+  getDocs,
+  orderBy,
+  query,
+  setDoc,
+} from '@firebase/firestore'
 import {
   Button,
   Card,
@@ -18,10 +28,23 @@ import { addWorkoutSession } from 'firebase/queries/workoutSessionQueries'
 import { ExerciseCard } from 'modules/exercise/components/ExerciseCard'
 import { Exercise } from 'modules/exercise/types'
 import { ExerciseForm } from 'modules/exercise/form/ExerciseForm'
-import { WorkoutSession } from 'modules/workoutsession/types'
+import {
+  WorkoutSession,
+  workoutSessionConverter,
+} from 'modules/workoutsession/types'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { showNotification } from '@mantine/notifications'
+import { MultiSelect } from '@mantine/core'
+import {
+  useCollectionData,
+  useDocumentData,
+} from 'react-firebase-hooks/firestore'
+import {
+  setUserInterests,
+  updateUserVisibility,
+  updateTagsCollection,
+} from 'firebase/queries/userQueries'
 
 export function NewProgram() {
   const theme = useMantineTheme()
@@ -32,8 +55,13 @@ export function NewProgram() {
   const [exerciseList, setExerciseList] = useState<Exercise[]>([])
   const [date, setDate] = useState<Date | null>(null)
 
+  const [tagsFromDB, loadingTags, errorTags] = useDocumentData(
+    doc(db, 'tags', 'ZP3S5zqtbEnjYZRvKMxB')
+  )
+  const tagList = tagsFromDB?.tags
+
   const form = useForm<WorkoutSession>({
-    initialValues: { title: '', createdBy: '', createdAt: '' },
+    initialValues: { title: '', createdBy: '', createdAt: '', tags: [] },
     validate: {
       title: value =>
         value.length < 2 ? 'Name must have at least 2 letters' : null,
@@ -44,6 +72,7 @@ export function NewProgram() {
     {
       date ? (values.createdAt = date) : null
     }
+
     setIsSubmitting(true)
 
     addWorkoutSession(values)
@@ -150,6 +179,26 @@ export function NewProgram() {
                 ))}
               </SimpleGrid>
             </Stepper.Step>
+            <Stepper.Step label="Third step" description="Choose tags">
+              <MultiSelect
+                label="Mine tags"
+                data={tagList} //replace with all tags
+                placeholder="Velg tags"
+                nothingFound="Ingen funnet"
+                value={form.values.tags}
+                searchable
+                multiple
+                creatable
+                getCreateLabel={tags => `+ Legg til ${tags}`}
+                onChange={tags => {
+                  updateTagsCollection(tags)
+                  form.setFieldValue('tags', tags)
+                  console.log(tags)
+                  return tags
+                }}
+              />
+            </Stepper.Step>
+
             <Stepper.Completed>
               Ferdig, klikk for å legge til økten!
             </Stepper.Completed>

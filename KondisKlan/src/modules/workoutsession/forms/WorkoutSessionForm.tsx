@@ -20,6 +20,7 @@ export function WorkoutSessionForm() {
       title: '',
       createdAt: '',
       createdBy: '',
+      tags: [],
     },
 
     validate(values) {
