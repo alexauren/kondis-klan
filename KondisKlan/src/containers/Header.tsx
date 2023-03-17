@@ -23,7 +23,7 @@ export function HeaderCustom({
   const theme = useMantineTheme()
   const { classes } = useStyles()
   return (
-    <Header height={70} p="md">
+    <Header height={70} p="md" className={classes.wrapper}>
       <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
         <MediaQuery largerThan="xs" styles={{ display: 'none' }}>
           <Burger
@@ -38,7 +38,7 @@ export function HeaderCustom({
         <Group className={classes.header}>
           <Group>
             <Image src={Logo} radius={'md'} width={48} height={48} />
-            <Text component={Link} to="/" weight={300} size="lg">
+            <Text component={Link} to="/" weight={300} size="xl">
               KondisKlan
             </Text>
           </Group>
@@ -55,5 +55,8 @@ const useStyles = createStyles(theme => ({
     [`@media (max-width: ${theme.breakpoints.xs}px)`]: {
       flexDirection: 'row-reverse',
     },
+  },
+  wrapper: {
+    backgroundColor: theme.white,
   },
 }))
