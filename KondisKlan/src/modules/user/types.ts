@@ -9,3 +9,13 @@ export type UserType = {
   public?: boolean
   uid: string
 }
+
+export type TimeRM = {
+  time: Timestamp
+  rm: number
+}
+
+export type ExerciseProgressType = {
+  name: string
+  progression: Array<TimeRM>
+}
