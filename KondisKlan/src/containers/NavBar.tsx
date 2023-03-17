@@ -18,6 +18,7 @@ import {
   IconSettings,
   IconLogout,
   IconPlus,
+  IconChartHistogram,
 } from '@tabler/icons-react'
 import Logo from 'assets/logo.png'
 import { useMobile } from 'util/hooks'
@@ -76,6 +77,7 @@ export default function NavbarMinimal({ isHidden }: NavbarMinimalProps) {
     { icon: IconPlus, label: 'Ny økt', link: '/newprogram' },
     { icon: IconUser, label: 'Profil', link: `/profile/${loggedInUser!.uid}` },
     { icon: IconSettings, label: 'Innstillinger', link: '/settings' },
+    { icon: IconChartHistogram, label: 'Progresjon', link: '/progression' },
   ]
 
   const links = mockdata.map((link, index) => (

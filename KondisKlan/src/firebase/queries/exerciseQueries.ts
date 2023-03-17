@@ -16,6 +16,7 @@ import {
 } from 'react-firebase-hooks/firestore'
 import { db } from 'containers/Root'
 import { Exercise } from 'modules/exercise/types'
+import { ExerciseProgressType } from 'modules/user/types'
 
 export function useExerciseCollection(documentRef: string) {
   console.log('HELLO')
@@ -70,20 +71,31 @@ export async function addCompletedExerciseDocument(
   )
 }
 
-addRmMax
-
 export async function addRmMax(userid: string, exercise: Exercise, date: Date) {
+  console.log('Her begynner rm max funksjonen')
   const exerciseName = exercise.name.toLowerCase().replace(/ /g, '')
-  const data = {
-    date: date,
-    rmMax: exercise.weight,
+  const onerm = exercise.weight! * (36 / (37 - exercise.reps!))
+  const currentRmMaxProgress = await getExerciseProgress(userid, exerciseName)
+
+  const newRmMaxProgress = {
+    progression: [
+      ...currentRmMaxProgress.progression,
+      { time: date, rm: onerm },
+    ],
   }
 
-  //use addDoc to add a document to the collection
-  return await addDoc(
-    collection(db, `users/${userid}/progresjon/${exerciseName}`),
-    data
-  )
+  //update firebase with new data
+  const exerciseRef = doc(db, `users/${userid}/progresjon/${exerciseName}`)
+  await setDoc(exerciseRef, newRmMaxProgress)
+  console.log('newRmMaxProgress' + newRmMaxProgress)
+}
+
+export async function getExerciseProgress(userid: string, exercise: string) {
+  const exerciseName = exercise.toLowerCase().replace(/ /g, '')
+  const exerciseRef = doc(db, `users/${userid}/progresjon/${exerciseName}`)
+  const exerciseData = await getDoc(exerciseRef).then(doc => doc.data())
+  console.log('exerciseData' + exerciseData)
+  return exerciseData as ExerciseProgressType
 }
 
 async function removeExerciseDocument(
