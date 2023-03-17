@@ -1,18 +1,8 @@
 import { Stack } from '@mantine/core'
 import { FullContentLoader } from 'components/FullContentLoader'
-import { WorkoutCard } from 'modules/workoutsession/components/WorkoutCard'
-import {
-  useMyCompletedWorkouts,
-  useMyWorkouts,
-  useWorkoutSessionCollection,
-} from '../../../firebase/queries/workoutSessionQueries'
-import { Exercise } from '../../exercise/types'
-import {
-  WorkoutSession,
-  WorkoutSessionDocument,
-  WorkoutSessionWithTimestamp,
-} from 'modules/workoutsession/types'
 import { WorkoutCardCompleted } from 'modules/workoutsession/components/WorkoutCardCompleted'
+import { WorkoutSessionComplete } from 'modules/workoutsession/types'
+import { useMyCompletedWorkouts } from '../../../firebase/queries/workoutSessionQueries'
 // Render the WorkoutCard component with the session and exercises props
 
 interface MyWorkoutsProps {
@@ -32,7 +22,7 @@ export function MyCompletedWorkouts({ userId }: MyWorkoutsProps) {
 
   console.log('completedWorkouts: ', data)
 
-  const workouts = data as WorkoutSessionWithTimestamp[]
+  const workouts = data as WorkoutSessionComplete[]
   return (
     <Stack>
       {workouts.map(workout => (

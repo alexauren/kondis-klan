@@ -21,10 +21,10 @@ function Root() {
   const mantineTheme: MantineThemeOverride = {
     colors: {
       kondisGreen: [
-        '#e4f7e3',
-        '#d9f4d8',
-        '#c9efc7',
-        '#b5d7b3',
+        '#f0ffef',
+        '#e3f9e2',
+        '#d1f0cf',
+        '#c0ddb9',
         '#a1bf9f',
         '#8da78b',
         '#798f77',

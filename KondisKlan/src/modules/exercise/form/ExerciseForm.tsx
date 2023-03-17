@@ -98,17 +98,19 @@ export function ExerciseForm({
         <NumberInput placeholder="Sets" {...form.getInputProps('sets')} />
         <NumberInput placeholder="Weight" {...form.getInputProps('weight')} />
         <NumberInput
-          placeholder="Duration"
+          placeholder="Varighet"
           {...form.getInputProps('duration')}
         />
         <Group position="right">
           <Button
             onClick={() => handleAddExercise(form.values)}
-            variant="outline"
+            variant="filled"
           >
-            Add exercise
+            Legg til øvelse
           </Button>
-          <Button onClick={handleClick}>Done</Button>
+          <Button variant="outline" onClick={handleClick}>
+            Fullfør
+          </Button>
         </Group>
       </Stack>
       <SimpleGrid cols={1}>{exerciseCards}</SimpleGrid>

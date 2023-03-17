@@ -1,6 +1,12 @@
 import { UserInfo } from 'firebase/auth'
 import { db } from 'containers/Root'
-import { setDoc, doc, updateDoc, getDoc } from 'firebase/firestore'
+import {
+  setDoc,
+  doc,
+  updateDoc,
+  getDoc,
+  DocumentData,
+} from 'firebase/firestore'
 import { useDocument, useDocumentData } from 'react-firebase-hooks/firestore'
 
 export async function createUserDoc(
@@ -66,4 +72,11 @@ export async function updateTagsCollection(tag: string[] | null) {
   await updateDoc(tagsRef, {
     tags: tagsArray,
   })
+}
+
+export function useUserDocument(uid: string) {
+  const userDocumentRef = doc(db, `users/${uid}`)
+  const [data, loading, error] = useDocumentData<DocumentData>(userDocumentRef)
+
+  return { data, loading, error }
 }

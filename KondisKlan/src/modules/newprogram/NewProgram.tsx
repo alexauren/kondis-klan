@@ -12,12 +12,14 @@ import {
 import {
   Button,
   Card,
+  createStyles,
   Group,
   Modal,
   SimpleGrid,
   Stepper,
   TextInput,
   Title,
+  Text,
   useMantineTheme,
 } from '@mantine/core'
 import { DatePicker } from '@mantine/dates'
@@ -35,6 +37,10 @@ import {
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { showNotification } from '@mantine/notifications'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { getAuth } from 'firebase/auth'
+import FullPageError from 'components/FullPageError'
+import { FullContentLoader } from 'components/FullContentLoader'
 import { MultiSelect } from '@mantine/core'
 import {
   useCollectionData,
@@ -47,8 +53,10 @@ import {
 } from 'firebase/queries/userQueries'
 
 export function NewProgram() {
+  const { classes } = useStyles()
   const theme = useMantineTheme()
   const navigate = useNavigate()
+  const auth = getAuth()
   const [active, setActive] = useState(0)
   const [opened, setOpened] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -59,6 +67,13 @@ export function NewProgram() {
     doc(db, 'tags', 'ZP3S5zqtbEnjYZRvKMxB')
   )
   const tagList = tagsFromDB?.tags
+  const [user, loading, error] = useAuthState(auth)
+
+  if (error) return <FullPageError />
+
+  if (loading || !user) return <FullContentLoader />
+
+  const uid = user.uid
 
   const form = useForm<WorkoutSession>({
     initialValues: { title: '', createdBy: '', createdAt: '', tags: [] },
@@ -74,6 +89,7 @@ export function NewProgram() {
     }
 
     setIsSubmitting(true)
+    values.createdBy = uid
 
     addWorkoutSession(values)
       .then(function (docRef) {
@@ -93,7 +109,7 @@ export function NewProgram() {
   }
 
   function handleNextStep() {
-    console.log('active: ' + active)
+    //console.log('active: ' + active)
     if (active === 2) {
       handleSubmit(form.values)
     }
@@ -106,7 +122,7 @@ export function NewProgram() {
 
     if (active === 0) {
       //validate that title and createdBy is filled out
-      if (form.values.title && form.values.createdBy) {
+      if (form.values.title) {
         setActive(active + 1)
       }
     }
@@ -119,46 +135,61 @@ export function NewProgram() {
   }
   return (
     <>
-      <Card withBorder shadow={'sm'}>
-        <Title order={2}>Opprett økt</Title>
+      <Card shadow={'sm'} className={classes.card}>
+        <Title order={2} color="kondisGreen.7">
+          Opprett økt
+        </Title>
         <form onSubmit={form.onSubmit(values => handleSubmit(values))}>
           <Stepper
             active={active}
             onStepClick={setActive}
             breakpoint="sm"
             mt="md"
+            classNames={{
+              separator: classes.step,
+            }}
           >
-            <Stepper.Step label="Steg 1" description="Opprett et nytt program">
+            <Stepper.Step
+              label="Steg 1"
+              description={
+                <Text color="kondisGreen.7">Opprett et nytt program</Text>
+              }
+            >
               <TextInput
+                classNames={{
+                  required: classes.required,
+                  label: classes.textColorTheme,
+                }}
                 withAsterisk
-                label="Tittel"
-                placeholder="Push, Pull, Legs"
+                label={'Tittel'}
+                placeholder="Overkropp, Bein, etc."
                 {...form.getInputProps('title')}
               />
-              <TextInput
-                mt="sm"
-                label="Laget av (skal fjernes)"
-                placeholder="john@smith.com"
-                {...form.getInputProps('createdBy')}
-              />
               <DatePicker
-                label="Created date"
-                placeholder="Choose date"
+                classNames={{
+                  required: classes.required,
+                  label: classes.textColorTheme,
+                }}
+                label="Dato opprettet"
+                placeholder="Velg dato"
                 value={date}
                 onChange={setDate}
               />
             </Stepper.Step>
-            <Stepper.Step label="Second step" description="Choose exercises">
+            <Stepper.Step
+              label="Steg 2"
+              description={<Text color="kondisGreen.7">Legg til øvelser</Text>}
+            >
               <Button
-                variant="outline"
+                variant="light"
                 onClick={() => {
                   setOpened(true)
                 }}
               >
-                Choose exercises
+                Legg til øvelser
               </Button>
               <Modal
-                title="Choose exercises"
+                title="Legg til øvelser"
                 size={'lg'}
                 opened={opened}
                 onClose={() => setOpened(false)}
@@ -210,14 +241,14 @@ export function NewProgram() {
               disabled={active == 0}
               onClick={handlePreviousStep}
             >
-              Back
+              Tilbake
             </Button>
             <Button
               type={active === 3 ? 'submit' : 'button'}
               onClick={handleNextStep}
               disabled={isSubmitting}
             >
-              {active === 2 ? 'Finish' : 'Next'}
+              {active === 2 ? 'Fullfør' : 'Neste'}
             </Button>
           </Group>
         </form>
@@ -225,3 +256,26 @@ export function NewProgram() {
     </>
   )
 }
+
+const useStyles = createStyles(theme => ({
+  card: {
+    border: '2px solid',
+    borderColor: theme.colors[theme.primaryColor][4],
+    backgroundColor: theme.colors[theme.primaryColor][2],
+    color: theme.colors[theme.primaryColor][7],
+  },
+  stepDescription: {
+    color: theme.colors[theme.primaryColor][7],
+    backgroundColor: theme.colors[theme.primaryColor][2],
+  },
+  step: {
+    color: 'hotpink',
+    backgroundColor: theme.colors[theme.primaryColor][0],
+  },
+  textColorTheme: {
+    color: theme.colors[theme.primaryColor][7],
+  },
+  required: {
+    color: theme.colors['red'][7],
+  },
+}))
