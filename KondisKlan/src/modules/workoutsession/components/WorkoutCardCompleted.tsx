@@ -46,13 +46,12 @@ export function WorkoutCardCompleted({ workoutsession }: WorkoutCard) {
     workoutsession.id
   )
   const { classes } = useStyles()
-
-  if (error || userError || !data || !userData || !user2Data || user2Error)
-    return <FullPageError />
-
   if (loading || userLoading || user2Loading) {
     return <EmptyLoader />
   }
+
+  if (error || userError || !data || !userData || !user2Data || user2Error)
+    return <FullPageError />
 
   if (!data) {
     return <div>Not found</div>

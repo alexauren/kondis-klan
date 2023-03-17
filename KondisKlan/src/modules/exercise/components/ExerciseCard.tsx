@@ -20,14 +20,14 @@ export function ExerciseCard({ exercise }: ExerciseCard) {
   const { name, ...attributes } = exercise
   const { classes } = useStyles()
 
-  const items = Object.entries(attributes).map(attribute => (
-    <Group position="apart" key={attribute[0]}>
-      <Badge variant="light">{attribute[0]}</Badge>
+  const attribute = (label: string, value: number | undefined) => (
+    <Group position="apart">
+      <Badge variant="light">{label}</Badge>
       <Text size="md" color="white" weight={500}>
-        {attribute[1]}
+        {value}
       </Text>
     </Group>
-  ))
+  )
 
   return (
     <Card radius="lg" shadow={'xs'} withBorder p="lg" className={classes.card}>
@@ -35,7 +35,12 @@ export function ExerciseCard({ exercise }: ExerciseCard) {
         {exercise.name}
       </Text>
 
-      <SimpleGrid cols={1}>{items}</SimpleGrid>
+      <SimpleGrid cols={1}>
+        {attribute('Reps', exercise.reps)}
+        {attribute('Sett', exercise.sets)}
+        {attribute('Vekt', exercise.weight)}
+        {exercise.duration && attribute('Varighet', exercise.duration)}
+      </SimpleGrid>
     </Card>
   )
 }

@@ -48,12 +48,11 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
   } = useUserDocument(workoutsession.createdBy)
   //const { data: userData, userLoading, userError } = useUser(workoutsession.createdBy)
   const { classes } = useStyles()
-
-  if (error || userError || !data || !userData) return <FullPageError />
-
   if (loading || userLoading) {
     return <EmptyLoader />
   }
+
+  if (error || userError) return <FullPageError />
 
   const exerciseList = data as Exercise[]
   const user = userData as UserType
@@ -64,7 +63,7 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
   )
 
   function handleComplete() {
-    const completedBy = 'gMYiPS1rkcQQndaN2X371LXqxyc2'
+    const completedBy = user.uid
     const completedAt = new Date()
     SendWorkoutToCompleted({
       workout: workoutsession,

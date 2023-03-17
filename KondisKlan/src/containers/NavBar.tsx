@@ -112,7 +112,7 @@ export default function NavbarMinimal({ isHidden }: NavbarMinimalProps) {
             link="/"
             to="/"
             icon={IconLogout}
-            label="Logout"
+            label="Logg ut"
             onClick={() => signOut(auth)}
           />
         </Stack>
@@ -152,6 +152,6 @@ const useStyles = createStyles(theme => ({
     },
   },
   navbar: {
-    backgroundColor: theme.colors[theme.primaryColor][0],
+    backgroundColor: theme.white,
   },
 }))

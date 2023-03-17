@@ -2,12 +2,14 @@ import { addDoc, collection } from '@firebase/firestore'
 import {
   Button,
   Card,
+  createStyles,
   Group,
   Modal,
   SimpleGrid,
   Stepper,
   TextInput,
   Title,
+  Text,
   useMantineTheme,
 } from '@mantine/core'
 import { DatePicker } from '@mantine/dates'
@@ -28,6 +30,7 @@ import FullPageError from 'components/FullPageError'
 import { FullContentLoader } from 'components/FullContentLoader'
 
 export function NewProgram() {
+  const { classes } = useStyles()
   const theme = useMantineTheme()
   const navigate = useNavigate()
   const auth = getAuth()
@@ -103,40 +106,61 @@ export function NewProgram() {
   }
   return (
     <>
-      <Card withBorder shadow={'sm'}>
-        <Title order={2}>Opprett økt</Title>
+      <Card shadow={'sm'} className={classes.card}>
+        <Title order={2} color="kondisGreen.7">
+          Opprett økt
+        </Title>
         <form onSubmit={form.onSubmit(values => handleSubmit(values))}>
           <Stepper
             active={active}
             onStepClick={setActive}
             breakpoint="sm"
             mt="md"
+            classNames={{
+              separator: classes.step,
+            }}
           >
-            <Stepper.Step label="Steg 1" description="Opprett et nytt program">
+            <Stepper.Step
+              label="Steg 1"
+              description={
+                <Text color="kondisGreen.7">Opprett et nytt program</Text>
+              }
+            >
               <TextInput
+                classNames={{
+                  required: classes.required,
+                  label: classes.textColorTheme,
+                }}
                 withAsterisk
-                label="Tittel"
-                placeholder="Push, Pull, Legs"
+                label={'Tittel'}
+                placeholder="Overkropp, Bein, etc."
                 {...form.getInputProps('title')}
               />
               <DatePicker
-                label="Created date"
-                placeholder="Choose date"
+                classNames={{
+                  required: classes.required,
+                  label: classes.textColorTheme,
+                }}
+                label="Dato opprettet"
+                placeholder="Velg dato"
                 value={date}
                 onChange={setDate}
               />
             </Stepper.Step>
-            <Stepper.Step label="Second step" description="Choose exercises">
+            <Stepper.Step
+              label="Steg 2"
+              description={<Text color="kondisGreen.7">Legg til øvelser</Text>}
+            >
               <Button
-                variant="outline"
+                variant="light"
                 onClick={() => {
                   setOpened(true)
                 }}
               >
-                Choose exercises
+                Legg til øvelser
               </Button>
               <Modal
-                title="Choose exercises"
+                title="Legg til øvelser"
                 size={'lg'}
                 opened={opened}
                 onClose={() => setOpened(false)}
@@ -168,14 +192,14 @@ export function NewProgram() {
               disabled={active == 0}
               onClick={handlePreviousStep}
             >
-              Back
+              Tilbake
             </Button>
             <Button
               type={active === 3 ? 'submit' : 'button'}
               onClick={handleNextStep}
               disabled={isSubmitting}
             >
-              {active === 2 ? 'Finish' : 'Next'}
+              {active === 2 ? 'Fullfør' : 'Neste'}
             </Button>
           </Group>
         </form>
@@ -183,3 +207,26 @@ export function NewProgram() {
     </>
   )
 }
+
+const useStyles = createStyles(theme => ({
+  card: {
+    border: '2px solid',
+    borderColor: theme.colors[theme.primaryColor][4],
+    backgroundColor: theme.colors[theme.primaryColor][2],
+    color: theme.colors[theme.primaryColor][7],
+  },
+  stepDescription: {
+    color: theme.colors[theme.primaryColor][7],
+    backgroundColor: theme.colors[theme.primaryColor][2],
+  },
+  step: {
+    color: 'hotpink',
+    backgroundColor: theme.colors[theme.primaryColor][0],
+  },
+  textColorTheme: {
+    color: theme.colors[theme.primaryColor][7],
+  },
+  required: {
+    color: theme.colors['red'][7],
+  },
+}))

@@ -4,7 +4,7 @@ import { WorkoutSessionFeed } from 'modules/workoutsession/components/WorkoutSes
 export function WorkoutSessionDetail() {
   return (
     <Stack>
-      <Title color={'white'}>Velkommen tilbake!</Title>
+      <Title>Velkommen tilbake!</Title>
       <WorkoutSessionFeed />
     </Stack>
   )
