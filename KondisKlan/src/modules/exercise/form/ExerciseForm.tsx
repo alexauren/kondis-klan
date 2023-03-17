@@ -62,12 +62,18 @@ export function ExerciseForm({
   return (
     <Group>
       <Stack justify={'flex-start'}>
-        <TextInput placeholder="Name" {...form.getInputProps('name')} />
-        <NumberInput placeholder="Reps" {...form.getInputProps('reps')} />
-        <NumberInput placeholder="Sets" {...form.getInputProps('sets')} />
-        <NumberInput placeholder="Weight" {...form.getInputProps('weight')} />
+        <TextInput placeholder="Navn" {...form.getInputProps('name')} />
         <NumberInput
-          placeholder="Duration"
+          placeholder="Repetisjoner"
+          {...form.getInputProps('reps')}
+        />
+        <NumberInput
+          placeholder="Antall sett"
+          {...form.getInputProps('sets')}
+        />
+        <NumberInput placeholder="Vekt" {...form.getInputProps('weight')} />
+        <NumberInput
+          placeholder="Varighet"
           {...form.getInputProps('duration')}
         />
         <Group position="right">
@@ -75,10 +81,10 @@ export function ExerciseForm({
             onClick={() => handleAddExercise(form.values)}
             variant="filled"
           >
-            Add exercise
+            Legg til øvelse
           </Button>
           <Button variant="outline" onClick={handleClick}>
-            Done
+            Fullfør
           </Button>
         </Group>
       </Stack>

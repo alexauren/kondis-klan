@@ -52,7 +52,7 @@ function UserDetail() {
   return (
     <Stack justify="flex-start">
       <Container mt={'lg'} size={700}>
-        <Title order={2} className={classes.title} mb="md">
+        <Title weight={'bold'} order={2} className={classes.title} mb="md">
           Profil
         </Title>
         <Paper shadow={'sm'} p={'lg'} className={classes.paper}>
@@ -106,11 +106,11 @@ function UserDetail() {
       </Container>
       <SimpleGrid cols={2}>
         <Stack>
-          <Title> My Workouts </Title>
+          <Title order={2}> Mine Treningsøkter</Title>
           <MyWorkouts userId={userId} />
         </Stack>
         <Stack>
-          <Title> Completed Workouts</Title>
+          <Title order={2}>Gjennomførte Treningsøkter</Title>
           <MyCompletedWorkouts userId={userId} />
         </Stack>
       </SimpleGrid>
