@@ -1,11 +1,7 @@
-<<<<<<< HEAD
 import { UserInfo } from 'firebase/auth'
 import { db } from 'containers/Root'
 import { setDoc, doc, updateDoc, getDoc } from 'firebase/firestore'
 import { useDocument, useDocumentData } from 'react-firebase-hooks/firestore'
-=======
-
->>>>>>> 037a751ea0bfe98b5ea3973b1662a35647ca809c
 
 export async function createUserDoc(
   { uid, email }: UserInfo,
@@ -59,11 +55,7 @@ export async function setUserInterests(userId: string, interests: string[]) {
   })
 }
 
-<<<<<<< HEAD
-export async function updateTagsCollection(tag: string | null) {
-=======
 export async function updateTagsCollection(tag: string[] | null) {
->>>>>>> 037a751ea0bfe98b5ea3973b1662a35647ca809c
   const tagsRef = doc(db, 'tags', 'ZP3S5zqtbEnjYZRvKMxB')
   const tags = await getDoc(tagsRef).then(doc => doc.data())
   const tagsList = tags?.tags
