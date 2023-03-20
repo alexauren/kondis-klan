@@ -12,7 +12,7 @@ export type WorkoutSession = {
   title: string
   createdAt: string | Date
   createdBy: string
-  tags?: Array<string>
+  tags?: string[]
 }
 
 export type WorkoutSessionDocument = WorkoutSession & {
@@ -40,6 +40,7 @@ export const workoutSessionConverter: FirestoreDataConverter<WorkoutSessionDocum
         title: workoutSession.title,
         createdAt: workoutSession.createdAt,
         createdBy: workoutSession.createdBy,
+        tags: workoutSession.tags,
       }
     },
     fromFirestore(
@@ -68,6 +69,7 @@ export const workoutSessionCompletedConverter: FirestoreDataConverter<WorkoutSes
         createdBy: workoutSession.createdBy,
         completedAt: workoutSession.completedAt,
         completedBy: workoutSession.completedBy,
+        tags: workoutSession.tags,
       }
     },
     fromFirestore(
@@ -82,6 +84,7 @@ export const workoutSessionCompletedConverter: FirestoreDataConverter<WorkoutSes
         createdBy: data.createdBy,
         completedAt: data.completedAt,
         completedBy: data.completedBy,
+        tags: data.tags,
       }
     },
   }

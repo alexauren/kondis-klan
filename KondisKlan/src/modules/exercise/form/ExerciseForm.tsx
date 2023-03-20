@@ -94,9 +94,12 @@ export function ExerciseForm({
             addExercise(exercise)
           }}
         />
-        <NumberInput placeholder="Reps" {...form.getInputProps('reps')} />
-        <NumberInput placeholder="Sets" {...form.getInputProps('sets')} />
-        <NumberInput placeholder="Weight" {...form.getInputProps('weight')} />
+        <NumberInput
+          placeholder="Repetisjoner"
+          {...form.getInputProps('reps')}
+        />
+        <NumberInput placeholder="Sett" {...form.getInputProps('sets')} />
+        <NumberInput placeholder="vekt" {...form.getInputProps('weight')} />
         <NumberInput
           placeholder="Varighet"
           {...form.getInputProps('duration')}

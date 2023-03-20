@@ -1,4 +1,5 @@
 import {
+  Badge,
   Button,
   Card,
   createStyles,
@@ -77,6 +78,14 @@ export function WorkoutCardCompleted({ workoutsession }: WorkoutCard) {
     'dd.MM.yyyy'
   )
 
+  if (workoutsession.tags) {
+    console.log('WORKOUT SESSION TAGS: ', workoutsession.tags)
+  }
+
+  const tags = workoutsession.tags?.map(tag => {
+    return <Badge variant="light">{tag}</Badge>
+  })
+
   function handleComplete() {
     const completedBy = loggedInUser.uid
     const completedAt = Timestamp.fromDate(new Date())
@@ -111,7 +120,7 @@ export function WorkoutCardCompleted({ workoutsession }: WorkoutCard) {
         <Title color={'kondisGreen.1'} transform="uppercase" order={3}>
           {workoutsession.title}
         </Title>
-
+        <Group>{tags}</Group>
         <Text align="center">
           <Group>
             <div>

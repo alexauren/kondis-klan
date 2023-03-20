@@ -25,6 +25,7 @@ import {
   workoutSessionCompletedConverter,
 } from 'modules/workoutsession/types'
 import { IconSquareRoundedChevronsRightFilled } from '@tabler/icons-react'
+import { UserType } from 'modules/user/types'
 
 export function useWorkoutSessionCollection() {
   //use useCollectionData to get the data from the collection
@@ -109,11 +110,16 @@ export async function SendWorkoutToCompleted({
   // this is the reference to completed workouts
   const collectionRef = collection(db, 'completedworkouts')
 
+  if (!workout.tags) {
+    workout.tags = []
+  }
+
   // this is where we create the object to be sent
   const completedWorkout = {
     title: workout.title,
     createdAt: workout.createdAt,
     createdBy: workout.createdBy,
+    tags: workout.tags,
     completedAt: completedAt,
     completedBy: completedBy,
   }
@@ -122,4 +128,18 @@ export async function SendWorkoutToCompleted({
 
   //use addDoc to add a document to the collection
   return await addDoc(collectionRef, completedWorkout)
+}
+
+export function useWorkoutSessionCollectionWithQuery(user: UserType) {
+  //use useCollectionData to get the data from the collection
+  const collectionRef = collection(db, 'workoutsessions').withConverter(
+    workoutSessionConverter
+  )
+  const querydata = query(
+    collectionRef,
+    where('tags', 'array-contains-any', user.interests),
+    orderBy('createdAt', 'desc')
+  )
+  const [data, loading, error] = useCollectionData<DocumentData>(querydata)
+  return { data, loading, error }
 }

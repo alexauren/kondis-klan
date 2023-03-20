@@ -7,6 +7,7 @@ import {
   Title,
   Text,
   SimpleGrid,
+  Badge,
 } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { EmptyLoader } from 'components/EmptyLoader'
@@ -62,6 +63,17 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
     'dd.MM.yyyy'
   )
 
+  const tags = workoutsession.tags?.map(tag => {
+    return (
+      <Badge
+        variant="gradient"
+        gradient={{ from: 'kondisGreen.5', to: 'kondisGreen.4' }}
+      >
+        {tag}
+      </Badge>
+    )
+  })
+
   function handleComplete() {
     const completedBy = loggedInUser.uid
     const completedAt = Timestamp.fromDate(new Date())
@@ -94,7 +106,7 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
         <Title color={'kondisGreen.8'} transform="uppercase" order={3}>
           {workoutsession.title}
         </Title>
-
+        <Group>{tags}</Group>
         <Text align="center">
           <Text
             component={Link}

@@ -23,6 +23,7 @@ export function StepperTags({
       placeholder="Velg tags"
       nothingFound="Ingen funnet"
       searchable
+      withinPortal
       multiple
       creatable
       getCreateLabel={tags => `+ Legg til ${tags}`}

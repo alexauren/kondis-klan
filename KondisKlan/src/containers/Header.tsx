@@ -7,9 +7,11 @@ import {
   Text,
   useMantineTheme,
   createStyles,
+  ActionIcon,
 } from '@mantine/core'
 import { Link } from 'react-router-dom'
 import Logo from 'assets/logo.png'
+import { UserSearch } from 'modules/user/components/UserSearch'
 
 interface HeaderCustomProps {
   toggleSidebarCallBack: (sidebarOpen: boolean) => void
@@ -23,7 +25,7 @@ export function HeaderCustom({
   const theme = useMantineTheme()
   const { classes } = useStyles()
   return (
-    <Header height={70} p="md" className={classes.wrapper}>
+    <Header height={70} p="md">
       <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
         <MediaQuery largerThan="xs" styles={{ display: 'none' }}>
           <Burger
@@ -37,26 +39,26 @@ export function HeaderCustom({
 
         <Group className={classes.header}>
           <Group>
-            <Image src={Logo} radius={'md'} width={48} height={48} />
+            <ActionIcon component={Link} to="/">
+              <Image src={Logo} radius={'md'} width={48} height={48} />
+            </ActionIcon>
             <Text component={Link} to="/" weight={300} size="xl">
               KondisKlan
             </Text>
           </Group>
+          <UserSearch />
         </Group>
       </div>
     </Header>
   )
 }
 
-const useStyles = createStyles(theme => ({
+const useStyles = createStyles(t => ({
   header: {
     width: '100%',
     justifyContent: 'space-between',
-    [`@media (max-width: ${theme.breakpoints.xs}px)`]: {
+    [`@media (max-width: ${t.breakpoints.sm}px)`]: {
       flexDirection: 'row-reverse',
     },
-  },
-  wrapper: {
-    backgroundColor: theme.white,
   },
 }))

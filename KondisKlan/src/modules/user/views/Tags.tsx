@@ -91,7 +91,6 @@ export default function TagView({ user }: TagViewProps) {
         {isMe && (
           <Select
             my="sm"
-            label="Legg til nye interesser. Begynn å skrive for å legge til en interresse som ikke er i listen."
             data={filteredTags}
             placeholder="Velg interesser"
             nothingFound="Ingen funnet"

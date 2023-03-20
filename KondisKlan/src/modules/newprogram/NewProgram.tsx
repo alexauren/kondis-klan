@@ -62,9 +62,7 @@ export function NewProgram() {
   })
 
   function handleSubmit(values: WorkoutSession) {
-    {
-      date ? (values.createdAt = date) : null
-    }
+    values.createdAt = new Date()
     values.createdBy = uid
     values.tags = tags
 
@@ -148,16 +146,6 @@ export function NewProgram() {
                 placeholder="Overkropp, Bein, etc."
                 {...form.getInputProps('title')}
               />
-              <DatePicker
-                classNames={{
-                  required: classes.required,
-                  label: classes.textColorTheme,
-                }}
-                label="Dato opprettet"
-                placeholder="Velg dato"
-                value={date}
-                onChange={setDate}
-              />
             </Stepper.Step>
             <Stepper.Step
               label="Steg 2"
@@ -193,7 +181,7 @@ export function NewProgram() {
                 ))}
               </SimpleGrid>
             </Stepper.Step>
-            <Stepper.Step label="Third step" description="Choose tags">
+            <Stepper.Step label="Steg 3" description="Legg til tags">
               <StepperTags tags={tags} data={tagList} callback={setTags} />
             </Stepper.Step>
 

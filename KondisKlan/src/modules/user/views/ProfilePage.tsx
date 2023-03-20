@@ -12,7 +12,7 @@ import {
   Title,
 } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
-import { IconAt, IconUser } from '@tabler/icons-react'
+import { IconAt, IconMail, IconUser } from '@tabler/icons-react'
 import { FullContentLoader } from 'components/FullContentLoader'
 import FullPageError from 'components/FullPageError'
 import { db } from 'containers/Root'
@@ -55,7 +55,7 @@ function UserDetail() {
                     {user.name}
                   </Text>
                   <Group noWrap spacing={10} mt={3}>
-                    <IconAt size={18} />
+                    <IconMail size={18} />
                     <Text size="md">{user.email}</Text>
                   </Group>
                 </div>
