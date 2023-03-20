@@ -23,15 +23,22 @@ export function ExerciseCard({ exercise }: ExerciseCard) {
   const attribute = (label: string, value: number | undefined) => (
     <Group position="apart">
       <Badge variant="light">{label}</Badge>
-      <Text size="md" color="white" weight={500}>
+      <Text size="md" weight={'bold'} color="white">
         {value}
       </Text>
     </Group>
   )
 
   return (
-    <Card radius="lg" shadow={'xs'} withBorder p="lg" className={classes.card}>
-      <Text align={'center'} size="sm" weight={700}>
+    <Card radius="lg" shadow={'sm'} withBorder p="lg" className={classes.card}>
+      <Text
+        mb="sm"
+        color={'kondisGreen.6'}
+        transform={'uppercase'}
+        align={'center'}
+        size="sm"
+        weight={700}
+      >
         {exercise.name}
       </Text>
 
@@ -49,6 +56,6 @@ const useStyles = createStyles(theme => ({
   card: {
     backgroundColor: theme.colors[theme.primaryColor][3],
     border: '1px solid ',
-    borderColor: theme.colors[theme.primaryColor][4],
+    borderColor: theme.colors[theme.primaryColor][3],
   },
 }))

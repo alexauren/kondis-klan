@@ -1,54 +1,60 @@
-import { addDoc, collection } from '@firebase/firestore'
 import {
   Button,
   Card,
   createStyles,
   Group,
   Modal,
+  MultiSelect,
   SimpleGrid,
   Stepper,
+  Text,
   TextInput,
   Title,
-  Text,
   useMantineTheme,
 } from '@mantine/core'
 import { DatePicker } from '@mantine/dates'
 import { useForm } from '@mantine/form'
+import { showNotification } from '@mantine/notifications'
+import { FullContentLoader } from 'components/FullContentLoader'
+import FullPageError from 'components/FullPageError'
 import { db } from 'containers/Root'
+import { getAuth } from 'firebase/auth'
+import { doc } from 'firebase/firestore'
 import { addExerciseDocument } from 'firebase/queries/exerciseQueries'
+import { updateTagsCollection } from 'firebase/queries/userQueries'
 import { addWorkoutSession } from 'firebase/queries/workoutSessionQueries'
 import { ExerciseCard } from 'modules/exercise/components/ExerciseCard'
-import { Exercise } from 'modules/exercise/types'
 import { ExerciseForm } from 'modules/exercise/form/ExerciseForm'
+import { Exercise } from 'modules/exercise/types'
+import { UserContext } from 'modules/user/UserAuthContext'
 import { WorkoutSession } from 'modules/workoutsession/types'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { showNotification } from '@mantine/notifications'
+import { useContext, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { getAuth } from 'firebase/auth'
-import FullPageError from 'components/FullPageError'
-import { FullContentLoader } from 'components/FullContentLoader'
+import { useDocumentData } from 'react-firebase-hooks/firestore'
+import { useNavigate } from 'react-router-dom'
+import { StepperTags } from './StepperTags'
 
 export function NewProgram() {
   const { classes } = useStyles()
   const theme = useMantineTheme()
   const navigate = useNavigate()
-  const auth = getAuth()
   const [active, setActive] = useState(0)
   const [opened, setOpened] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [exerciseList, setExerciseList] = useState<Exercise[]>([])
   const [date, setDate] = useState<Date | null>(null)
-  const [user, loading, error] = useAuthState(auth)
+  const [tags, setTags] = useState<string[]>([])
+  const user = useContext(UserContext)
 
-  if (error) return <FullPageError />
-
-  if (loading || !user) return <FullContentLoader />
+  const [tagsFromDB, loading, error] = useDocumentData(
+    doc(db, 'tags', 'ZP3S5zqtbEnjYZRvKMxB')
+  )
+  const tagList: string[] = tagsFromDB?.tags
 
   const uid = user.uid
 
   const form = useForm<WorkoutSession>({
-    initialValues: { title: '', createdBy: '', createdAt: '' },
+    initialValues: { title: '', createdBy: '', createdAt: '', tags: [] },
     validate: {
       title: value =>
         value.length < 2 ? 'Name must have at least 2 letters' : null,
@@ -56,11 +62,11 @@ export function NewProgram() {
   })
 
   function handleSubmit(values: WorkoutSession) {
-    {
-      date ? (values.createdAt = date) : null
-    }
-    setIsSubmitting(true)
+    values.createdAt = new Date()
     values.createdBy = uid
+    values.tags = tags
+
+    setIsSubmitting(true)
 
     addWorkoutSession(values)
       .then(function (docRef) {
@@ -104,9 +110,12 @@ export function NewProgram() {
       setActive(active - 1)
     }
   }
+  if (loading) return <FullContentLoader />
+
+  if (error) return <FullPageError />
   return (
     <>
-      <Card shadow={'sm'} className={classes.card}>
+      <Card radius={'lg'} shadow={'sm'} className={classes.card}>
         <Title order={2} color="kondisGreen.7">
           Opprett økt
         </Title>
@@ -118,6 +127,7 @@ export function NewProgram() {
             mt="md"
             classNames={{
               separator: classes.step,
+              stepIcon: classes.stepIcon,
             }}
           >
             <Stepper.Step
@@ -135,16 +145,6 @@ export function NewProgram() {
                 label={'Tittel'}
                 placeholder="Overkropp, Bein, etc."
                 {...form.getInputProps('title')}
-              />
-              <DatePicker
-                classNames={{
-                  required: classes.required,
-                  label: classes.textColorTheme,
-                }}
-                label="Dato opprettet"
-                placeholder="Velg dato"
-                value={date}
-                onChange={setDate}
               />
             </Stepper.Step>
             <Stepper.Step
@@ -181,6 +181,10 @@ export function NewProgram() {
                 ))}
               </SimpleGrid>
             </Stepper.Step>
+            <Stepper.Step label="Steg 3" description="Legg til tags">
+              <StepperTags tags={tags} data={tagList} callback={setTags} />
+            </Stepper.Step>
+
             <Stepper.Completed>
               Ferdig, klikk for å legge til økten!
             </Stepper.Completed>
@@ -212,7 +216,7 @@ const useStyles = createStyles(theme => ({
   card: {
     border: '2px solid',
     borderColor: theme.colors[theme.primaryColor][4],
-    backgroundColor: theme.colors[theme.primaryColor][2],
+    backgroundColor: theme.colors[theme.primaryColor][1],
     color: theme.colors[theme.primaryColor][7],
   },
   stepDescription: {
@@ -220,13 +224,18 @@ const useStyles = createStyles(theme => ({
     backgroundColor: theme.colors[theme.primaryColor][2],
   },
   step: {
-    color: 'hotpink',
-    backgroundColor: theme.colors[theme.primaryColor][0],
+    backgroundColor: theme.colors[theme.primaryColor][3],
   },
   textColorTheme: {
     color: theme.colors[theme.primaryColor][7],
   },
   required: {
     color: theme.colors['red'][7],
+  },
+  stepIcon: {
+    color: theme.colors[theme.primaryColor][9],
+    backgroundColor: theme.white,
+    border: '2px solid',
+    borderColor: theme.colors[theme.primaryColor][3],
   },
 }))

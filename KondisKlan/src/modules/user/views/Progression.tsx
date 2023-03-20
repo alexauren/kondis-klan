@@ -1,4 +1,11 @@
-import { Button, Card, Container, Select, Title } from '@mantine/core'
+import {
+  Button,
+  Card,
+  Container,
+  createStyles,
+  Select,
+  Title,
+} from '@mantine/core'
 import { getExerciseProgress } from 'firebase/queries/exerciseQueries'
 import {
   CategoryScale,
@@ -28,6 +35,7 @@ export default function ProgressionView() {
   const exerciseNames = data?.map(doc => doc.name)
   const [labels, setLabels] = useState<string[]>([])
   const [weightData, setWeightData] = useState<number[]>([])
+  const { classes } = useStyles()
 
   if (loading) {
     return <FullContentLoader />
@@ -105,7 +113,7 @@ export default function ProgressionView() {
 
   return (
     <Container style={{ width: '1200px' }}>
-      <Card shadow="sm" color="white">
+      <Card className={classes.root} withBorder color="white">
         <Title ta="left">Progresjon</Title>
         <Select
           label="Velg øvelse"
@@ -123,3 +131,10 @@ export default function ProgressionView() {
     </Container>
   )
 }
+
+const useStyles = createStyles(theme => ({
+  root: {
+    border: '1px solid',
+    borderColor: theme.colors[theme.primaryColor][3],
+  },
+}))

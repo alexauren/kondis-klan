@@ -1,4 +1,5 @@
 import {
+  Badge,
   Button,
   Card,
   createStyles,
@@ -13,8 +14,10 @@ import { showNotification } from '@mantine/notifications'
 import { EmptyLoader } from 'components/EmptyLoader'
 import FullPageError from 'components/FullPageError'
 import { format } from 'date-fns'
+import { Timestamp } from 'firebase/firestore'
 import {
   addCompletedExerciseDocument,
+  addRmMax,
   useCompletedExerciseCollection,
   useExerciseCollection,
 } from 'firebase/queries/exerciseQueries'
@@ -23,7 +26,9 @@ import { SendWorkoutToCompleted } from 'firebase/queries/workoutSessionQueries'
 import { ExerciseCard } from 'modules/exercise/components/ExerciseCard'
 import { Exercise } from 'modules/exercise/types'
 import { UserType } from 'modules/user/types'
+import { UserContext } from 'modules/user/UserAuthContext'
 import { WorkoutSessionComplete } from 'modules/workoutsession/types'
+import { useContext } from 'react'
 import { Link } from 'react-router-dom'
 
 //interface
@@ -46,6 +51,7 @@ export function WorkoutCardCompleted({ workoutsession }: WorkoutCard) {
   const { data, error, loading } = useCompletedExerciseCollection(
     workoutsession.id
   )
+  const loggedInUser = useContext(UserContext)
   const { classes } = useStyles()
   if (loading || userLoading || user2Loading) {
     return <EmptyLoader />
@@ -72,9 +78,17 @@ export function WorkoutCardCompleted({ workoutsession }: WorkoutCard) {
     'dd.MM.yyyy'
   )
 
+  if (workoutsession.tags) {
+    console.log('WORKOUT SESSION TAGS: ', workoutsession.tags)
+  }
+
+  const tags = workoutsession.tags?.map(tag => {
+    return <Badge variant="light">{tag}</Badge>
+  })
+
   function handleComplete() {
-    const completedBy = 'gMYiPS1rkcQQndaN2X371LXqxyc2'
-    const completedAt = new Date()
+    const completedBy = loggedInUser.uid
+    const completedAt = Timestamp.fromDate(new Date())
     SendWorkoutToCompleted({
       workout: workoutsession,
       completedAt,
@@ -83,6 +97,10 @@ export function WorkoutCardCompleted({ workoutsession }: WorkoutCard) {
       .then(docRef => {
         exerciseList.forEach(exercise => {
           addCompletedExerciseDocument(docRef.id, exercise)
+          //if exercise has weight, add to rmMax
+          if (exercise.weight) {
+            addRmMax(completedBy, exercise, completedAt)
+          }
         })
       })
       .then(() => {
@@ -102,7 +120,7 @@ export function WorkoutCardCompleted({ workoutsession }: WorkoutCard) {
         <Title color={'kondisGreen.1'} transform="uppercase" order={3}>
           {workoutsession.title}
         </Title>
-
+        <Group>{tags}</Group>
         <Text align="center">
           <Group>
             <div>
