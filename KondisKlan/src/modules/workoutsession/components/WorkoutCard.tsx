@@ -1,43 +1,35 @@
 import {
-  Text,
-  Container,
-  Title,
-  SimpleGrid,
-  Card,
-  Skeleton,
   Button,
+  Card,
   createStyles,
   Group,
   Stack,
+  Title,
+  Text,
+  SimpleGrid,
+  Badge,
 } from '@mantine/core'
-import { Exercise } from 'modules/exercise/types'
-import { ExerciseCard } from 'modules/exercise/components/ExerciseCard'
-import {
-  WorkoutSession,
-  WorkoutSessionDocument,
-  WorkoutSessionWithTimestamp,
-} from 'modules/workoutsession/types'
+import { showNotification } from '@mantine/notifications'
+import { EmptyLoader } from 'components/EmptyLoader'
+import FullPageError from 'components/FullPageError'
+import { format } from 'date-fns'
+import { getAuth } from 'firebase/auth'
+import { Timestamp } from 'firebase/firestore'
 import {
   addCompletedExerciseDocument,
   addExerciseDocument,
   addRmMax,
   useExerciseCollection,
 } from 'firebase/queries/exerciseQueries'
-import { FullContentLoader } from 'components/FullContentLoader'
-import { EmptyLoader } from 'components/EmptyLoader'
-import { format } from 'date-fns'
-import { SendWorkoutToCompleted } from 'firebase/queries/workoutSessionQueries'
-import { Timestamp } from 'firebase/firestore'
-import { useDocumentData } from 'react-firebase-hooks/firestore'
-import { showNotification } from '@mantine/notifications'
 import { useUserDocument } from 'firebase/queries/userQueries'
-import FullPageError from 'components/FullPageError'
+import { SendWorkoutToCompleted } from 'firebase/queries/workoutSessionQueries'
+import { ExerciseCard } from 'modules/exercise/components/ExerciseCard'
+import { Exercise } from 'modules/exercise/types'
 import { UserType } from 'modules/user/types'
-import { getAuth } from 'firebase/auth'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { Link } from 'react-router-dom'
-import { useContext } from 'react'
 import { UserContext } from 'modules/user/UserAuthContext'
+import { WorkoutSessionWithTimestamp } from 'modules/workoutsession/types'
+import { useContext } from 'react'
+import { Link } from 'react-router-dom'
 
 //interface
 interface WorkoutCard {
@@ -52,17 +44,16 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
     error: userError,
     loading: userLoading,
   } = useUserDocument(workoutsession.createdBy)
-  const auth = getAuth()
   const loggedInUser = useContext(UserContext)
 
   //const { data: userData, userLoading, userError } = useUser(workoutsession.createdBy)
   const { classes } = useStyles()
 
-  if (error || userError || !data || !userData) return <FullPageError />
-
   if (loading || userLoading) {
     return <EmptyLoader />
   }
+
+  if (error || userError || !data || !userData) return <FullPageError />
 
   const exerciseList = data as Exercise[]
   const user = userData as UserType
@@ -71,6 +62,17 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
     workoutsession.createdAt.toDate(),
     'dd.MM.yyyy'
   )
+
+  const tags = workoutsession.tags?.map(tag => {
+    return (
+      <Badge
+        variant="gradient"
+        gradient={{ from: 'kondisGreen.5', to: 'kondisGreen.4' }}
+      >
+        {tag}
+      </Badge>
+    )
+  })
 
   function handleComplete() {
     const completedBy = loggedInUser.uid
@@ -98,16 +100,13 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
       })
   }
 
-  //console.log(workoutsession)
-  console.log('denne skal returne user: ', user)
-
   return (
     <Card radius={'lg'} shadow={'sm'} className={classes.card}>
       <Stack align={'center'}>
         <Title color={'kondisGreen.8'} transform="uppercase" order={3}>
           {workoutsession.title}
         </Title>
-
+        <Group>{tags}</Group>
         <Text align="center">
           <Text
             component={Link}
@@ -136,7 +135,6 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
         </Button>
       </Group>
     </Card>
-    // </Container>
   )
 }
 

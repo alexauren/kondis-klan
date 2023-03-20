@@ -76,7 +76,6 @@ export default function NavbarMinimal({ isHidden }: NavbarMinimalProps) {
     { icon: IconHome2, label: 'Hjem', link: '/' },
     { icon: IconPlus, label: 'Ny økt', link: '/newprogram' },
     { icon: IconUser, label: 'Profil', link: `/profile/${loggedInUser!.uid}` },
-    { icon: IconSettings, label: 'Innstillinger', link: '/settings' },
     { icon: IconChartHistogram, label: 'Progresjon', link: '/progression' },
   ]
 

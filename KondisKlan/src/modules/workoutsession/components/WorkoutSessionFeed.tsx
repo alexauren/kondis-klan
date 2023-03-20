@@ -1,7 +1,13 @@
 import { Stack } from '@mantine/core'
 import { FullContentLoader } from 'components/FullContentLoader'
+import { UserType } from 'modules/user/types'
+import { UserContext } from 'modules/user/UserAuthContext'
 import { WorkoutCard } from 'modules/workoutsession/components/WorkoutCard'
-import { useWorkoutSessionCollection } from '../../../firebase/queries/workoutSessionQueries'
+import { useContext } from 'react'
+import {
+  useWorkoutSessionCollection,
+  useWorkoutSessionCollectionWithQuery,
+} from '../../../firebase/queries/workoutSessionQueries'
 import { Exercise } from '../../exercise/types'
 import {
   WorkoutSession,
@@ -10,14 +16,16 @@ import {
 } from '../types'
 // Render the WorkoutCard component with the session and exercises props
 export function WorkoutSessionFeed() {
-  const { data, error, loading } = useWorkoutSessionCollection()
+  const loggedInUser = useContext(UserContext) as UserType
+  const { data, error, loading } =
+    useWorkoutSessionCollectionWithQuery(loggedInUser)
 
   if (loading) {
     return <FullContentLoader />
   }
 
   if (error || !data) {
-    return <span>Error</span>
+    return <div>Error: {error!.message}</div>
   }
 
   const workouts = data as WorkoutSessionWithTimestamp[]

@@ -6,8 +6,16 @@ import {
   updateDoc,
   getDoc,
   DocumentData,
+  collection,
+  query,
+  orderBy,
+  where,
 } from 'firebase/firestore'
-import { useDocument, useDocumentData } from 'react-firebase-hooks/firestore'
+import {
+  useCollectionData,
+  useDocument,
+  useDocumentData,
+} from 'react-firebase-hooks/firestore'
 
 export async function createUserDoc(
   { uid, email }: UserInfo,
@@ -56,6 +64,7 @@ export async function addUserInterests(userId: string, interestList: string[]) {
 
 export async function setUserInterests(userId: string, interests: string[]) {
   const user = doc(db, 'users', userId)
+  console.log('trying to set user interests now')
   await updateDoc(user, {
     interests: interests,
   })
@@ -78,5 +87,16 @@ export function useUserDocument(uid: string) {
   const userDocumentRef = doc(db, `users/${uid}`)
   const [data, loading, error] = useDocumentData<DocumentData>(userDocumentRef)
 
+  return { data, loading, error }
+}
+
+export function useUserCollection() {
+  const collectionRef = collection(db, 'users')
+  const querydata = query(
+    collectionRef,
+    where('public', '==', true),
+    orderBy('name', 'asc')
+  )
+  const [data, loading, error] = useCollectionData<DocumentData>(querydata)
   return { data, loading, error }
 }

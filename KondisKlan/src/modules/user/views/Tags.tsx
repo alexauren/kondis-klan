@@ -1,4 +1,4 @@
-import { ActionIcon, Container, Select, SimpleGrid } from '@mantine/core'
+import { ActionIcon, Container, Select, SimpleGrid, Stack } from '@mantine/core'
 import { IconX } from '@tabler/icons-react'
 import { Group, Title, Badge, Avatar, MultiSelect } from '@mantine/core'
 import { FullContentLoader } from 'components/FullContentLoader'
@@ -11,66 +11,96 @@ import {
 } from 'firebase/queries/userQueries'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { useParams } from 'react-router-dom'
+import { useContext } from 'react'
+import { UserContext } from '../UserAuthContext'
+import { UserType } from '../types'
 
-export default function TagView() {
+interface TagViewProps {
+  user: UserType
+}
+
+export default function TagView({ user }: TagViewProps) {
   const { userId } = useParams() as { userId: string }
-  const userRef = doc(db, 'users', userId)
-  const [value, loading, error] = useDocumentData(userRef)
+  const userLoggedIn = useContext(UserContext)
   const [tagsFromDB, loadingTags, errorTags] = useDocumentData(
     doc(db, 'tags', 'ZP3S5zqtbEnjYZRvKMxB')
   )
-  const tagList = tagsFromDB?.tags
-  if (loading || loadingTags) {
+
+  if (loadingTags) {
     return <FullContentLoader />
   }
-  if (error || errorTags) {
+  if (errorTags) {
     return <FullPageError />
   }
 
-  const user = value
+  const isMe = userLoggedIn?.uid === user.uid
+  const tagList = tagsFromDB?.tags
   const interests = user?.interests
+  const filteredTags = tagList?.filter(
+    (tag: string) => !interests?.includes(tag)
+  )
 
   function handleRemoveTag(tag: string) {
-    const tagsList = user?.interests.filter((item: string) => item !== tag)
+    const tagsList = user.interests!.filter((item: string) => item !== tag)
     setUserInterests(userId, tagsList)
   }
 
-  return (
-    <Container style={{ width: '1200px' }}>
-      <Title ta="left">Tags</Title>
-      <Group position="center" mt="md" spacing="md">
-        {interests?.map((tag: string) => (
-          <Badge mt="md">
-            <Group position="center" spacing="xs">
-              {tag}
-              <ActionIcon
-                size="xs"
-                radius="xl"
-                variant="transparent"
-                onClick={() => handleRemoveTag(tag)}
-              >
-                <IconX size={30} />
-              </ActionIcon>
-            </Group>
-          </Badge>
-        ))}
-      </Group>
+  function handleOnChange(tag: string | null) {
+    {
+      !user.interests ? (user.interests = []) : null
+    }
+    if (tag) {
+      if (user.interests.includes(tag)) {
+        return
+      }
+      user.interests.push(tag)
+      setUserInterests(userId, user.interests)
+      updateTagsCollection(tag)
+    }
+  }
 
-      <Select
-        label="Legg til nye interesser. Begynn å skrive for å legge til en interresse som ikke er i listen."
-        data={tagList}
-        placeholder="Velg interesser"
-        nothingFound="Ingen funnet"
-        searchable
-        creatable
-        getCreateLabel={tags => `+ Legg til ${tags}`}
-        onChange={tags => {
-          const tagsList = user?.interests.concat(tags)
-          const tagsArray = Array.from(new Set<string>(tagsList))
-          setUserInterests(userId, tagsArray)
-          updateTagsCollection(tags)
-        }}
-      />
-    </Container>
+  return (
+    <Stack mb={'sm'} align={'center'} justify="center">
+      <Container size={'xs'}>
+        <Title order={4} ta="left">
+          Mine interesser
+        </Title>
+
+        <Group position="center" mt="md" spacing="md">
+          {interests?.map((tag: string) => (
+            <Badge
+              variant="gradient"
+              gradient={{ from: 'kondisGreen.4', to: 'kondisGreen.3' }}
+            >
+              <Group position="center" spacing="xs">
+                {tag}
+                {isMe && (
+                  <ActionIcon
+                    size="xs"
+                    radius="xl"
+                    variant="transparent"
+                    onClick={() => handleRemoveTag(tag)}
+                  >
+                    <IconX size={30} color={'white'} />
+                  </ActionIcon>
+                )}
+              </Group>
+            </Badge>
+          ))}
+        </Group>
+        {isMe && (
+          <Select
+            my="sm"
+            data={filteredTags}
+            placeholder="Velg interesser"
+            nothingFound="Ingen funnet"
+            searchable
+            creatable
+            getCreateLabel={tags => `+ Legg til ${tags}`}
+            onChange={tag => handleOnChange(tag)}
+          />
+        )}
+      </Container>
+    </Stack>
   )
 }
