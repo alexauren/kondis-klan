@@ -27,6 +27,8 @@ export async function createUserDoc(
     authProvider: 'local',
     email: email,
     public: true,
+    interests: ['kondis'],
+    streak: 0,
   })
 }
 

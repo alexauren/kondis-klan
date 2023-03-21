@@ -24,6 +24,7 @@ import { useParams } from 'react-router-dom'
 import { MyCompletedWorkouts } from '../components/MyCompletedWorkouts'
 import { MyWorkouts } from '../components/MyWorkouts'
 import { UserType } from '../types'
+import Streak from './Streak'
 import TagView from './Tags'
 
 function UserDetail() {
@@ -57,6 +58,7 @@ function UserDetail() {
                   <Group noWrap spacing={10} mt={3}>
                     <IconMail size={18} />
                     <Text size="md">{user.email}</Text>
+                    <Streak user={user} />
                   </Group>
                 </div>
               </Group>

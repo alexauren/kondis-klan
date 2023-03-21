@@ -8,6 +8,7 @@ export type UserType = {
   name: string
   public?: boolean
   uid: string
+  streak?: number
 }
 
 export type TimeRM = {
