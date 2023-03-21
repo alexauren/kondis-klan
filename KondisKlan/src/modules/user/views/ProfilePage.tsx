@@ -24,6 +24,7 @@ import { useParams } from 'react-router-dom'
 import { MyCompletedWorkouts } from '../components/MyCompletedWorkouts'
 import { MyWorkouts } from '../components/MyWorkouts'
 import { UserType } from '../types'
+import Streak from './Streak'
 import TagView from './Tags'
 
 function UserDetail() {
@@ -44,6 +45,7 @@ function UserDetail() {
 
   return (
     <Stack justify="flex-start">
+      <Streak user={user} />
       <Container mt={'lg'}>
         <Paper shadow={'lg'} p={'lg'} radius="md" className={classes.paper}>
           {user && (

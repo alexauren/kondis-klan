@@ -21,8 +21,11 @@ import {
   useCompletedExerciseCollection,
   useExerciseCollection,
 } from 'firebase/queries/exerciseQueries'
-import { useUserDocument } from 'firebase/queries/userQueries'
-import { SendWorkoutToCompleted } from 'firebase/queries/workoutSessionQueries'
+import { incrementStreak, useUserDocument } from 'firebase/queries/userQueries'
+import {
+  getHoursSinceLastWorkout,
+  SendWorkoutToCompleted,
+} from 'firebase/queries/workoutSessionQueries'
 import { ExerciseCard } from 'modules/exercise/components/ExerciseCard'
 import { Exercise } from 'modules/exercise/types'
 import { UserType } from 'modules/user/types'
@@ -89,6 +92,12 @@ export function WorkoutCardCompleted({ workoutsession }: WorkoutCard) {
   function handleComplete() {
     const completedBy = loggedInUser.uid
     const completedAt = Timestamp.fromDate(new Date())
+    const hours = getHoursSinceLastWorkout(completedBy)
+
+    if (hours < 24 && hours > 0) {
+      incrementStreak(completedBy)
+    }
+
     SendWorkoutToCompleted({
       workout: workoutsession,
       completedAt,

@@ -96,6 +96,32 @@ export function useMyCompletedWorkouts(userId: string) {
   return { data, loading, error }
 }
 
+export function getHoursSinceLastWorkout(userId: string) {
+  const { data, loading, error } = useMyCompletedWorkouts(userId)
+
+  if (loading) {
+    return -1
+  }
+
+  if (error) {
+    return -1
+  }
+
+  if (data) {
+    const workouts = data as WorkoutSessionComplete[]
+    const lastWorkout = workouts.sort(
+      (a, b) => b.completedAt.toMillis() - a.completedAt.toMillis()
+    )[0]
+    const diffHours =
+      Math.abs(
+        new Date().getTime() - lastWorkout.completedAt.toDate().getTime()
+      ) / 36e5
+    return Math.round(diffHours)
+  } else {
+    return -1
+  }
+}
+
 interface SendWorkoutToCompletedProps {
   workout: WorkoutSessionWithTimestamp
   completedBy: string

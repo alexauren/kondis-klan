@@ -10,12 +10,14 @@ import {
   query,
   orderBy,
   where,
+  getDocs,
 } from 'firebase/firestore'
 import {
   useCollectionData,
   useDocument,
   useDocumentData,
 } from 'react-firebase-hooks/firestore'
+import { WorkoutSessionComplete } from 'modules/workoutsession/types'
 
 export async function createUserDoc(
   { uid, email }: UserInfo,
@@ -99,4 +101,18 @@ export function useUserCollection() {
   )
   const [data, loading, error] = useCollectionData<DocumentData>(querydata)
   return { data, loading, error }
+}
+
+export function resetStreak(userId: string) {
+  const user = doc(db, 'users', userId)
+  updateDoc(user, {
+    streak: 0,
+  })
+}
+
+export async function incrementStreak(userId: string) {
+  const userRef = doc(db, 'users', userId)
+  const currentStreak =
+    ((await getDoc(userRef).then(doc => doc.data())) as number) || 0
+  await updateDoc(userRef, { streak: currentStreak + 1 })
 }
