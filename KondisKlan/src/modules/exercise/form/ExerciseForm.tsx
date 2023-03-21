@@ -39,13 +39,9 @@ export function ExerciseForm({
       weight: undefined,
       duration: undefined,
     },
-
-    validate(values) {
-      const errors: any = {}
-      if (!values.name) {
-        errors.name = 'name is required'
-      }
-      return errors
+    validate: {
+      name: value =>
+        value.length < 2 ? 'Name must have at least 2 letters' : null,
     },
   })
 
@@ -65,6 +61,10 @@ export function ExerciseForm({
   }
 
   function handleAddExercise(values: Exercise) {
+    form.validate()
+    if (!form.isValid) {
+      return
+    }
     const exercise = determineExerciseType(values)
     console.log(exercise)
     exerciseList.push(exercise)
@@ -77,46 +77,49 @@ export function ExerciseForm({
   ))
 
   return (
-    <Group>
-      <Stack justify={'flex-start'}>
-        <Select
-          //Legg til label ved behov.
-          data={exerciseData}
-          placeholder="Skriv inn navnet på øvelsen."
-          nothingFound="Finner ikke øvelsen."
-          searchable
-          creatable
-          getCreateLabel={exercise => `+ Legg til ${exercise}`}
-          onChange={exercise => {
-            exercise = exercise as string
-            console.log(exercise)
-            form.setFieldValue('name', exercise)
-            addExercise(exercise)
-          }}
-        />
-        <NumberInput
-          placeholder="Repetisjoner"
-          {...form.getInputProps('reps')}
-        />
-        <NumberInput placeholder="Sett" {...form.getInputProps('sets')} />
-        <NumberInput placeholder="vekt" {...form.getInputProps('weight')} />
-        <NumberInput
-          placeholder="Varighet"
-          {...form.getInputProps('duration')}
-        />
-        <Group position="right">
-          <Button
-            onClick={() => handleAddExercise(form.values)}
-            variant="filled"
-          >
-            Legg til øvelse
-          </Button>
-          <Button variant="outline" onClick={handleClick}>
-            Fullfør
-          </Button>
-        </Group>
-      </Stack>
-      <SimpleGrid cols={1}>{exerciseCards}</SimpleGrid>
-    </Group>
+    <form>
+      <Group>
+        <Stack justify={'flex-start'}>
+          <Select
+            //Legg til label ved behov.
+            data={exerciseData}
+            placeholder="Skriv inn navnet på øvelsen."
+            nothingFound="Finner ikke øvelsen."
+            searchable
+            creatable
+            getCreateLabel={exercise => `+ Legg til ${exercise}`}
+            {...form.getInputProps('name')}
+            onChange={exercise => {
+              exercise = exercise as string
+              console.log(exercise)
+              form.setFieldValue('name', exercise)
+              addExercise(exercise)
+            }}
+          />
+          <NumberInput
+            placeholder="Repetisjoner"
+            {...form.getInputProps('reps')}
+          />
+          <NumberInput placeholder="Sett" {...form.getInputProps('sets')} />
+          <NumberInput placeholder="vekt" {...form.getInputProps('weight')} />
+          <NumberInput
+            placeholder="Varighet"
+            {...form.getInputProps('duration')}
+          />
+          <Group position="right">
+            <Button
+              onClick={() => form.validate() && handleAddExercise(form.values)}
+              variant="filled"
+            >
+              Legg til øvelse
+            </Button>
+            <Button variant="outline" onClick={handleClick}>
+              Fullfør
+            </Button>
+          </Group>
+        </Stack>
+        <SimpleGrid cols={1}>{exerciseCards}</SimpleGrid>
+      </Group>
+    </form>
   )
 }

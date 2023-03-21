@@ -81,14 +81,15 @@ function UserDetail() {
         </Paper>
       </Container>
       <SimpleGrid cols={2}>
-        <Stack>
-          <Title order={2}> Mine Treningsøkter</Title>
-          <MyWorkouts userId={userId} />
-        </Stack>
-        <Stack>
-          <Title order={2}>Gjennomførte Treningsøkter</Title>
-          <MyCompletedWorkouts userId={userId} />
-        </Stack>
+        <Title color={'kondisGreen.7'} order={2}>
+          {' '}
+          Mine Treningsøkter
+        </Title>
+        <Title color={'kondisGreen.7'} order={2}>
+          Gjennomførte Treningsøkter
+        </Title>
+        <MyWorkouts userId={userId} />
+        <MyCompletedWorkouts userId={userId} />
       </SimpleGrid>
     </Stack>
   )

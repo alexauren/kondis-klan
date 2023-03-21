@@ -1,16 +1,8 @@
 import { Stack } from '@mantine/core'
 import { FullContentLoader } from 'components/FullContentLoader'
 import { WorkoutCard } from 'modules/workoutsession/components/WorkoutCard'
-import {
-  useMyWorkouts,
-  useWorkoutSessionCollection,
-} from '../../../firebase/queries/workoutSessionQueries'
-import { Exercise } from '../../exercise/types'
-import {
-  WorkoutSession,
-  WorkoutSessionDocument,
-  WorkoutSessionWithTimestamp,
-} from 'modules/workoutsession/types'
+import { WorkoutSessionWithTimestamp } from 'modules/workoutsession/types'
+import { useMyWorkouts } from '../../../firebase/queries/workoutSessionQueries'
 // Render the WorkoutCard component with the session and exercises props
 
 interface MyWorkoutsProps {

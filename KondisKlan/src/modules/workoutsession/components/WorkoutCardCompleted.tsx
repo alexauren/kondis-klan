@@ -111,7 +111,6 @@ export function WorkoutCardCompleted({ workoutsession }: WorkoutCard) {
         })
       })
   }
-
   console.log(workoutsession)
 
   return (
@@ -120,7 +119,9 @@ export function WorkoutCardCompleted({ workoutsession }: WorkoutCard) {
         <Title color={'kondisGreen.1'} transform="uppercase" order={3}>
           {workoutsession.title}
         </Title>
-        <Group>{tags}</Group>
+        <Group>
+          {tags?.length ? tags : <Badge variant="outline">Ingen tags</Badge>}
+        </Group>
         <Text align="center">
           <Group>
             <div>

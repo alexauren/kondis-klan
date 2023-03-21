@@ -1,5 +1,5 @@
 import { ActionIcon, Container, Select, SimpleGrid, Stack } from '@mantine/core'
-import { IconX } from '@tabler/icons-react'
+import { IconExclamationMark, IconX } from '@tabler/icons-react'
 import { Group, Title, Badge, Avatar, MultiSelect } from '@mantine/core'
 import { FullContentLoader } from 'components/FullContentLoader'
 import FullPageError from 'components/FullPageError'
@@ -14,6 +14,7 @@ import { useParams } from 'react-router-dom'
 import { useContext } from 'react'
 import { UserContext } from '../UserAuthContext'
 import { UserType } from '../types'
+import { showNotification } from '@mantine/notifications'
 
 interface TagViewProps {
   user: UserType
@@ -51,6 +52,15 @@ export default function TagView({ user }: TagViewProps) {
     }
     if (tag) {
       if (user.interests.includes(tag)) {
+        return
+      }
+      if (user.interests.length >= 10) {
+        showNotification({
+          title: 'Du kan ikke ha mer enn 10 interesser',
+          message: 'Fjern en av dine interesser før du legger til en ny',
+          color: 'orange',
+          icon: <IconExclamationMark />,
+        })
         return
       }
       user.interests.push(tag)

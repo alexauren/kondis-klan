@@ -9,6 +9,7 @@ import {
   Badge,
 } from '@mantine/core'
 import { Exercise } from '../types'
+import { determineExerciseType } from '../util'
 
 //interface
 interface ExerciseCard {
@@ -17,7 +18,7 @@ interface ExerciseCard {
 
 //component
 export function ExerciseCard({ exercise }: ExerciseCard) {
-  const { name, ...attributes } = exercise
+  const exerciseDetermined = determineExerciseType(exercise)
   const { classes } = useStyles()
 
   const attribute = (label: string, value: number | undefined) => (
@@ -27,6 +28,22 @@ export function ExerciseCard({ exercise }: ExerciseCard) {
         {value}
       </Text>
     </Group>
+  )
+
+  const conditioningExercise = (
+    <SimpleGrid cols={1}>
+      {attribute('Varighet', exercise.duration)}
+      {attribute('Sett', exercise.sets)}
+    </SimpleGrid>
+  )
+
+  const strengthExercise = (
+    <SimpleGrid cols={1}>
+      {attribute('Reps', exercise.reps)}
+      {attribute('Sett', exercise.sets)}
+      {attribute('Vekt', exercise.weight)}
+      {exercise.duration && attribute('Varighet', exercise.duration)}
+    </SimpleGrid>
   )
 
   return (
@@ -42,12 +59,9 @@ export function ExerciseCard({ exercise }: ExerciseCard) {
         {exercise.name}
       </Text>
 
-      <SimpleGrid cols={1}>
-        {attribute('Reps', exercise.reps)}
-        {attribute('Sett', exercise.sets)}
-        {attribute('Vekt', exercise.weight)}
-        {exercise.duration && attribute('Varighet', exercise.duration)}
-      </SimpleGrid>
+      {exerciseDetermined.type === 'conditioning'
+        ? conditioningExercise
+        : strengthExercise}
     </Card>
   )
 }

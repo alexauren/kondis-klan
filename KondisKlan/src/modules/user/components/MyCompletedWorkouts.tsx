@@ -20,8 +20,6 @@ export function MyCompletedWorkouts({ userId }: MyWorkoutsProps) {
     return <span>{error.message}</span>
   }
 
-  console.log('completedWorkouts: ', data)
-
   const workouts = data as WorkoutSessionComplete[]
   return (
     <Stack>

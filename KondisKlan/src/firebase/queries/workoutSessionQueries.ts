@@ -135,6 +135,9 @@ export function useWorkoutSessionCollectionWithQuery(user: UserType) {
   const collectionRef = collection(db, 'workoutsessions').withConverter(
     workoutSessionConverter
   )
+  if (user.interests?.length === 0) {
+    user.interests = ['yoga']
+  }
   const querydata = query(
     collectionRef,
     where('tags', 'array-contains-any', user.interests),

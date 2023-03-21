@@ -113,9 +113,18 @@ export default function ProgressionView() {
 
   return (
     <Container style={{ width: '1200px' }}>
-      <Card className={classes.root} withBorder color="white">
-        <Title ta="left">Progresjon</Title>
+      <Card
+        p={'xl'}
+        radius={'lg'}
+        className={classes.root}
+        withBorder
+        color="white"
+      >
+        <Title ta="left" color={'kondisGreen.8'}>
+          Progresjon
+        </Title>
         <Select
+          my="sm"
           label="Velg øvelse"
           data={exerciseNames ? exerciseNames : []}
           placeholder="Benkpress"
@@ -125,8 +134,9 @@ export default function ProgressionView() {
             showExercise(exercise as string)
           }}
         />
-
-        <Line data={graphData} options={options} />
+        <Card radius="xl" className={classes.lineGraph}>
+          <Line data={graphData} options={options} />
+        </Card>
       </Card>
     </Container>
   )
@@ -134,7 +144,12 @@ export default function ProgressionView() {
 
 const useStyles = createStyles(theme => ({
   root: {
-    border: '1px solid',
-    borderColor: theme.colors[theme.primaryColor][3],
+    border: '2px solid',
+    borderColor: theme.colors[theme.primaryColor][4],
+    backgroundColor: theme.colors[theme.primaryColor][1],
+  },
+  lineGraph: {
+    border: '2px solid',
+    borderColor: theme.colors[theme.primaryColor][4],
   },
 }))

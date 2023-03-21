@@ -106,7 +106,9 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
         <Title color={'kondisGreen.8'} transform="uppercase" order={3}>
           {workoutsession.title}
         </Title>
-        <Group>{tags}</Group>
+        <Group>
+          {tags?.length ? tags : <Badge variant="outline">Ingen tags</Badge>}
+        </Group>
         <Text align="center">
           <Text
             component={Link}

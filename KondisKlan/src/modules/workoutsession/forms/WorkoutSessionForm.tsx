@@ -42,16 +42,6 @@ export function WorkoutSessionForm() {
     },
   })
 
-  //Litt forklaring her:
-  // TextInput er en komponent fra Mantine som tar inn en placeholder og en onChange funksjon
-  // form.getInputProps er en funksjon som returnerer en onChange funksjon og en value
-  // ...form.getInputProps("title") er en spread operator som gjør at vi kan sende inn onChange og value som props til TextInput
-  // Når man klikker på button, så kjører onSubmit og sender inn verdier fra formet
-  // Alt wrappes i en stack for å få litt spacing mellom elementene
-  // Hvis du åpner opp konsollen kan du se at å trykke på knappen console.logger verdier fra formet
-
-  //Det nedenfor er det visuelle
-
   return (
     <form onSubmit={form.onSubmit(values => submitWorkout(values))}>
       <Stack>

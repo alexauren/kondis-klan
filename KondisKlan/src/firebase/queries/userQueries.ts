@@ -27,6 +27,8 @@ export async function createUserDoc(
     authProvider: 'local',
     email: email,
     public: true,
+    friends: [],
+    interests: ['yoga'],
   })
 }
 
