@@ -4,16 +4,8 @@ import { UserType } from 'modules/user/types'
 import { UserContext } from 'modules/user/UserAuthContext'
 import { WorkoutCard } from 'modules/workoutsession/components/WorkoutCard'
 import { useContext } from 'react'
-import {
-  useWorkoutSessionCollection,
-  useWorkoutSessionCollectionWithQuery,
-} from '../../../firebase/queries/workoutSessionQueries'
-import { Exercise } from '../../exercise/types'
-import {
-  WorkoutSession,
-  WorkoutSessionDocument,
-  WorkoutSessionWithTimestamp,
-} from '../types'
+import { useWorkoutSessionCollectionWithQuery } from '../../../firebase/queries/workoutSessionQueries'
+import { WorkoutSessionWithTimestamp } from '../types'
 // Render the WorkoutCard component with the session and exercises props
 export function WorkoutSessionFeed() {
   const loggedInUser = useContext(UserContext) as UserType
@@ -32,7 +24,11 @@ export function WorkoutSessionFeed() {
   return (
     <Stack>
       {workouts.map(workout => (
-        <WorkoutCard key={workout.id} workoutsession={workout} />
+        <WorkoutCard
+          key={workout.id}
+          onCompleteCallback={() => {}}
+          workoutsession={workout}
+        />
       ))}
     </Stack>
   )
