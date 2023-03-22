@@ -1,3 +1,4 @@
+import { db } from 'containers/Root'
 import {
   addDoc,
   collection,
@@ -11,21 +12,18 @@ import {
   Timestamp,
   where,
 } from 'firebase/firestore'
+import { UserType } from 'modules/user/types'
+import {
+  WorkoutSession,
+  workoutSessionCompletedConverter,
+  workoutSessionConverter,
+  WorkoutSessionDocument,
+  WorkoutSessionWithTimestamp,
+} from 'modules/workoutsession/types'
 import {
   useCollectionData,
   useDocumentData,
 } from 'react-firebase-hooks/firestore'
-import { db } from 'containers/Root'
-import {
-  WorkoutSession,
-  WorkoutSessionComplete,
-  workoutSessionConverter,
-  WorkoutSessionDocument,
-  WorkoutSessionWithTimestamp,
-  workoutSessionCompletedConverter,
-} from 'modules/workoutsession/types'
-import { IconSquareRoundedChevronsRightFilled } from '@tabler/icons-react'
-import { UserType } from 'modules/user/types'
 
 export function useWorkoutSessionCollection() {
   //use useCollectionData to get the data from the collection
@@ -109,6 +107,10 @@ export async function SendWorkoutToCompleted({
 }: SendWorkoutToCompletedProps) {
   // this is the reference to completed workouts
   const collectionRef = collection(db, 'completedworkouts')
+
+  if (!workout.tags) {
+    workout.tags = []
+  }
 
   if (!workout.tags) {
     workout.tags = []

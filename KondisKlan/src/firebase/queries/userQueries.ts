@@ -1,19 +1,18 @@
-import { UserInfo } from 'firebase/auth'
 import { db } from 'containers/Root'
+import { UserInfo } from 'firebase/auth'
 import {
-  setDoc,
-  doc,
-  updateDoc,
-  getDoc,
-  DocumentData,
   collection,
-  query,
+  doc,
+  DocumentData,
+  getDoc,
   orderBy,
+  query,
+  setDoc,
+  updateDoc,
   where,
 } from 'firebase/firestore'
 import {
   useCollectionData,
-  useDocument,
   useDocumentData,
 } from 'react-firebase-hooks/firestore'
 

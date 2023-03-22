@@ -13,6 +13,7 @@ export type WorkoutSession = {
   createdAt: string | Date
   createdBy: string
   tags?: string[]
+  streak?: number
 }
 
 export type WorkoutSessionDocument = WorkoutSession & {

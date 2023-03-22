@@ -6,31 +6,35 @@ import {
   Group,
   Paper,
   SimpleGrid,
-  Space,
   Stack,
   Text,
   Title,
 } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
-import { IconAt, IconMail, IconUser } from '@tabler/icons-react'
+import { IconMail, IconUser } from '@tabler/icons-react'
 import { FullContentLoader } from 'components/FullContentLoader'
 import FullPageError from 'components/FullPageError'
 import { db } from 'containers/Root'
 import { doc } from 'firebase/firestore'
 import { updateUserVisibility } from 'firebase/queries/userQueries'
+import { WorkoutSessionComplete } from 'modules/workoutsession/types'
 import { useState } from 'react'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
 import { useParams } from 'react-router-dom'
 import { MyCompletedWorkouts } from '../components/MyCompletedWorkouts'
 import { MyWorkouts } from '../components/MyWorkouts'
 import { UserType } from '../types'
-import TagView from './Tags'
+import Streak from './Streak'
+import { TagView } from './Tags'
 
 function UserDetail() {
   const { classes } = useStyles()
   const { userId } = useParams() as { userId: string }
   const userRef = doc(db, 'users', userId)
   const [value, loading, error] = useDocumentData(userRef)
+  const [lastCompletedWorkouts, setLastCompletedWorkouts] = useState<
+    WorkoutSessionComplete[]
+  >([])
 
   const [isChecked, setIsChecked] = useState(false)
 
@@ -46,38 +50,37 @@ function UserDetail() {
     <Stack justify="flex-start">
       <Container mt={'lg'}>
         <Paper shadow={'lg'} p={'lg'} radius="md" className={classes.paper}>
-          {user && (
-            <div className={classes.detailsCard}>
-              <Group mt="sm">
-                <IconUser className={classes.iconUser} stroke={1.2} size={70} />
-                <div>
-                  <Text color={'kondisGreen.8'} className={classes.name}>
-                    {user.name}
-                  </Text>
-                  <Group noWrap spacing={10} mt={3}>
-                    <IconMail size={18} />
-                    <Text size="md">{user.email}</Text>
-                  </Group>
-                </div>
-              </Group>
-              <Divider color={'kondisGreen.4'} my="lg" />
-              <TagView user={user} />
-              <Checkbox
-                checked={user ? user.public : false}
-                onChange={() => {
-                  updateUserVisibility(userId, !isChecked).then(() => {
-                    showNotification({
-                      title: 'Oppdatert',
-                      message: 'Din synlighet er nå endret',
-                      color: 'teal',
-                    })
-                    setIsChecked(!isChecked)
+          <div className={classes.detailsCard}>
+            <Group mt="sm">
+              <IconUser className={classes.iconUser} stroke={1.2} size={70} />
+              <div>
+                <Text color={'kondisGreen.8'} className={classes.name}>
+                  {user.name}
+                </Text>
+                <Group noWrap spacing={10} mt={3}>
+                  <IconMail size={18} />
+                  <Text size="md">{user.email}</Text>
+                  <Streak user={user} />
+                </Group>
+              </div>
+            </Group>
+            <Divider color={'kondisGreen.4'} my="lg" />
+            <TagView user={user} />
+            <Checkbox
+              checked={user ? user.public : false}
+              onChange={() => {
+                updateUserVisibility(userId, !isChecked).then(() => {
+                  showNotification({
+                    title: 'Oppdatert',
+                    message: 'Din synlighet er nå endret',
+                    color: 'teal',
                   })
-                }}
-                label="Jeg vil at profilen min skal være offentlig"
-              />
-            </div>
-          )}
+                  setIsChecked(!isChecked)
+                })
+              }}
+              label="Jeg vil at profilen min skal være offentlig"
+            />
+          </div>
         </Paper>
       </Container>
       <SimpleGrid cols={2}>
@@ -88,8 +91,14 @@ function UserDetail() {
         <Title color={'kondisGreen.7'} order={2}>
           Gjennomførte Treningsøkter
         </Title>
-        <MyWorkouts userId={userId} />
-        <MyCompletedWorkouts userId={userId} />
+        <MyWorkouts
+          lastCompletedWorkouts={lastCompletedWorkouts}
+          userId={userId}
+        />
+        <MyCompletedWorkouts
+          lastWorkoutsCallback={setLastCompletedWorkouts}
+          userId={userId}
+        />
       </SimpleGrid>
     </Stack>
   )

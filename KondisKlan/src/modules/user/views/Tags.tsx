@@ -20,7 +20,7 @@ interface TagViewProps {
   user: UserType
 }
 
-export default function TagView({ user }: TagViewProps) {
+export function TagView({ user }: TagViewProps) {
   const { userId } = useParams() as { userId: string }
   const userLoggedIn = useContext(UserContext)
   const [tagsFromDB, loadingTags, errorTags] = useDocumentData(

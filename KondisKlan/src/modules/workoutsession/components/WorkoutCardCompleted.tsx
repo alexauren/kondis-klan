@@ -19,7 +19,6 @@ import {
   addCompletedExerciseDocument,
   addRmMax,
   useCompletedExerciseCollection,
-  useExerciseCollection,
 } from 'firebase/queries/exerciseQueries'
 import { useUserDocument } from 'firebase/queries/userQueries'
 import { SendWorkoutToCompleted } from 'firebase/queries/workoutSessionQueries'
@@ -30,14 +29,19 @@ import { UserContext } from 'modules/user/UserAuthContext'
 import { WorkoutSessionComplete } from 'modules/workoutsession/types'
 import { useContext } from 'react'
 import { Link } from 'react-router-dom'
+import { streakChecker } from '../util'
 
 //interface
 interface WorkoutCard {
   workoutsession: WorkoutSessionComplete
+  onCompleteCallback: () => void
 }
 
 //component
-export function WorkoutCardCompleted({ workoutsession }: WorkoutCard) {
+export function WorkoutCardCompleted({
+  workoutsession,
+  onCompleteCallback,
+}: WorkoutCard) {
   const {
     data: userData,
     error: userError,
@@ -86,7 +90,12 @@ export function WorkoutCardCompleted({ workoutsession }: WorkoutCard) {
     return <Badge variant="light">{tag}</Badge>
   })
 
+  if (workoutsession.tags) {
+    console.log('WORKOUT SESSION TAGS: ', workoutsession.tags)
+  }
+
   function handleComplete() {
+    onCompleteCallback()
     const completedBy = loggedInUser.uid
     const completedAt = Timestamp.fromDate(new Date())
     SendWorkoutToCompleted({
@@ -97,6 +106,10 @@ export function WorkoutCardCompleted({ workoutsession }: WorkoutCard) {
       .then(docRef => {
         exerciseList.forEach(exercise => {
           addCompletedExerciseDocument(docRef.id, exercise)
+          //if exercise has weight, add to rmMax
+          if (exercise.weight) {
+            addRmMax(completedBy, exercise, completedAt)
+          }
           //if exercise has weight, add to rmMax
           if (exercise.weight) {
             addRmMax(completedBy, exercise, completedAt)

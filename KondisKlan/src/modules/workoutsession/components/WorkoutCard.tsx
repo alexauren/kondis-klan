@@ -1,23 +1,21 @@
 import {
+  Badge,
   Button,
   Card,
   createStyles,
   Group,
-  Stack,
-  Title,
-  Text,
   SimpleGrid,
-  Badge,
+  Stack,
+  Text,
+  Title,
 } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { EmptyLoader } from 'components/EmptyLoader'
 import FullPageError from 'components/FullPageError'
 import { format } from 'date-fns'
-import { getAuth } from 'firebase/auth'
 import { Timestamp } from 'firebase/firestore'
 import {
   addCompletedExerciseDocument,
-  addExerciseDocument,
   addRmMax,
   useExerciseCollection,
 } from 'firebase/queries/exerciseQueries'
@@ -34,10 +32,14 @@ import { Link } from 'react-router-dom'
 //interface
 interface WorkoutCard {
   workoutsession: WorkoutSessionWithTimestamp
+  onCompleteCallback: () => void
 }
 
 //component
-export function WorkoutCard({ workoutsession }: WorkoutCard) {
+export function WorkoutCard({
+  workoutsession,
+  onCompleteCallback,
+}: WorkoutCard) {
   const { data, error, loading } = useExerciseCollection(workoutsession.id)
   const {
     data: userData,
@@ -75,6 +77,7 @@ export function WorkoutCard({ workoutsession }: WorkoutCard) {
   })
 
   function handleComplete() {
+    onCompleteCallback()
     const completedBy = loggedInUser.uid
     const completedAt = Timestamp.fromDate(new Date())
     SendWorkoutToCompleted({
