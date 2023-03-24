@@ -22,7 +22,10 @@ export function WorkoutSessionDetail() {
 
   return (
     <Stack>
-      <Title color={'kondisGreen.7'}>Velkommen tilbake, {user.name}!</Title>
+      <Title color={'kondisGreen.7'}>Velkommen, {user.name}!</Title>
+      <Title order={4} color={'kondisGreen.5'}>
+        Her er anbefalte økter basert på dine interesser
+      </Title>
       <WorkoutSessionFeed />
     </Stack>
   )

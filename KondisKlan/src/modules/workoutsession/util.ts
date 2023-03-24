@@ -6,7 +6,7 @@ import { doc, updateDoc } from 'firebase/firestore'
 import { UserType } from 'modules/user/types'
 import { UserContext } from 'modules/user/UserAuthContext'
 import { useContext } from 'react'
-import { WorkoutSessionComplete } from './types'
+import { WorkoutSessionComplete, WorkoutSessionWithTimestamp } from './types'
 
 interface StreakCheckerProps {
   workouts: WorkoutSessionComplete[]
@@ -119,5 +119,11 @@ async function updateUserStreak(streak: number, uid: string) {
   const userRef = doc(db, 'users', uid)
   await updateDoc(userRef, {
     streak: streak,
+  })
+}
+
+export function sortWorkoutsByDesc(workouts: WorkoutSessionWithTimestamp[]) {
+  return workouts.sort((a, b) => {
+    return b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime()
   })
 }
